@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
       },
 
-      category: {
+      type: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -34,10 +34,34 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
+
+      cultivated_area: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      item_type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+
+      harvest_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+
       price: {
         type: DataTypes.FLOAT,
         allowNull: false,
       },
+
+
+      collection_location: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
 
       description: {
         type: DataTypes.TEXT,

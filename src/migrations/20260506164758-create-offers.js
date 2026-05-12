@@ -9,6 +9,7 @@ module.exports = {
         type: Sequelize.UUID,
         references: { model: 'users', key: 'id' }
       },
+      type: Sequelize.STRING,
       quantity: Sequelize.FLOAT,
       quantity_gauge: { type: Sequelize.STRING, allowNull: false },
       cultivated_area: Sequelize.FLOAT,
