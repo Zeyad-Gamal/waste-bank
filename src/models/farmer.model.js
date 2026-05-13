@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       national_id_image: {
-        type: DataTypes.BLOB('long'),
+        type: DataTypes.STRING,
         allowNull: true,
       },
 
