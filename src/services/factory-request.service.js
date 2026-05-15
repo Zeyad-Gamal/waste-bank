@@ -116,6 +116,7 @@ exports.cancelFactoryRequest =
       throw new Error(
         'Only open requests can be cancelled'
       );
+    }
 
     request.status = 'cancelled';
 
