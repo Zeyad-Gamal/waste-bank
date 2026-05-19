@@ -8,8 +8,9 @@ const authRoutes = require('./routes/auth.routes');
 const offerRoutes = require('./routes/offer.routes');
 const factoryRequestRoutes = require('./routes/factory-request.routes');
 const purchaseRoutes = require('./routes/purchase.routes');
-
-
+const inventoryRoutes = require('./routes/inventory.routes');
+const saleRoutes = require('./routes/sale.routes');
+const shipmentRoutes = require('./routes/shipment.routes');
 const app = express();
 
 // Middlewares
@@ -24,7 +25,9 @@ app.use('/api/offers', offerRoutes);
 app.use('/api/factory-requests', factoryRequestRoutes);
 
 app.use('/api/purchases', purchaseRoutes);
-
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/sales', saleRoutes);
+app.use('/api/shipments',shipmentRoutes);
 app.use(
   '/uploads',
   express.static(path.join(__dirname, '../uploads'))

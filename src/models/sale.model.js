@@ -67,10 +67,14 @@ module.exports = (sequelize, DataTypes) => {
       as: 'request',
     });
 
-    Sale.hasMany(models.SaleItem, {
+
+    Sale.hasMany(
+    models.SaleItem,
+    {
       foreignKey: 'sale_id',
-      as: 'sale_items',
-    });
+      as: 'items'
+    }
+  );
 
   };
 

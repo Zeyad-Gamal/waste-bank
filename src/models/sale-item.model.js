@@ -56,10 +56,13 @@ module.exports = (sequelize, DataTypes) => {
       as: 'sale',
     });
 
-    SaleItem.belongsTo(models.Inventory, {
+    SaleItem.belongsTo(
+    models.Inventory,
+    {
       foreignKey: 'inventory_id',
-      as: 'inventory',
-    });
+      as: 'inventory'
+    }
+  );
 
   };
 

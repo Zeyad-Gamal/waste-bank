@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
+      quantity_gauge: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
       price: {
         type: DataTypes.FLOAT,
         allowNull: false,
@@ -41,15 +46,18 @@ module.exports = (sequelize, DataTypes) => {
           'rejected',
           'completed'
         ),
+
         defaultValue: 'pending',
       },
     },
+
     {
       tableName: 'purchases',
 
       timestamps: true,
 
       createdAt: 'created_at',
+
       updatedAt: 'updated_at',
     }
   );
@@ -66,12 +74,8 @@ module.exports = (sequelize, DataTypes) => {
       as: 'inventory',
     });
 
-    Offer.hasMany(models.Purchase, {
-  foreignKey: 'offer_id',
-  as: 'purchases',
-});
-
   };
 
   return Purchase;
+
 };
