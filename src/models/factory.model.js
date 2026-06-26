@@ -5,6 +5,12 @@ module.exports = (sequelize, DataTypes) => {
   const Factory = sequelize.define(
     'Factory',
     {
+
+      id: {
+  type: DataTypes.UUID,
+  defaultValue: DataTypes.UUIDV4,
+  primaryKey: true,
+},
       user_id: {
         type: DataTypes.UUID,
         primaryKey: true,
