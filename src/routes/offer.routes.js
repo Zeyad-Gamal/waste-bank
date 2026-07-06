@@ -91,7 +91,7 @@ router.get(
     
     authMiddleware,
     
-    offerController.getApprovedOffers
+    offerController.getAllOffers
 );
 
 

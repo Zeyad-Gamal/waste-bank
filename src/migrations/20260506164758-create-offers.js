@@ -18,7 +18,11 @@ module.exports = {
       price: Sequelize.FLOAT,
       collection_location: Sequelize.STRING,
       description: Sequelize.TEXT,
-      status: Sequelize.STRING,
+      status: {
+        type: Sequelize.ENUM('pending', 'approved', 'rejected'),
+        allowNull: false,
+        defaultValue: 'pending',
+      },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
 
       updated_at: {

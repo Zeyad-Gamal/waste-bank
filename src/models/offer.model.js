@@ -100,7 +100,7 @@ module.exports = (sequelize, DataTypes) => {
   as: 'images',
 });
 
-    Offer.belongsTo(models.Farmer, {
+    Offer.belongsTo(models.User, {
       foreignKey: 'farmer_id',
       as: 'farmer',
     });

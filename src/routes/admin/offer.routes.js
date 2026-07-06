@@ -1,121 +1,6 @@
 const { Offer, OfferImage, User, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 
-exports.createOffer = async (data) => {
-
-  const transaction = await sequelize.transaction();
-
-  try {
-
-    const offer = await Offer.create({
-
-      farmer_id: data.farmer_id,
-
-      type: data.type,
-
-      quantity: data.quantity,
-
-      quantity_gauge: data.quantity_gauge,
-
-      cultivated_area: data.cultivated_area,
-
-      item_type: data.item_type,
-
-      harvest_date: data.harvest_date,
-
-      price: data.price,
-
-      collection_location: data.collection_location,
-
-      description: data.description,
-
-      status: 'pending',
-
-    }, { transaction });
-
-    if (data.images && data.images.length > 0) {
-
-      const imagesData = data.images.map(imagePath => ({
-
-        offer_id: offer.id,
-
-        image_url: imagePath,
-
-      }));
-
-      await OfferImage.bulkCreate(
-        imagesData,
-        { transaction }
-      );
-
-    }
-
-    await transaction.commit();
-
-    return offer;
-
-  } catch (error) {
-
-    await transaction.rollback();
-
-    throw error;
-
-  }
-
-};
-
-exports.updateOffer = async (
-  offerId,
-  farmerId,
-  data
-) => {
-
-  const offer = await Offer.findOne({
-
-    where: {
-      id: offerId,
-      farmer_id: farmerId,
-    },
-
-  });
-
-  if (!offer) {
-    throw new AppError('Offer not found', 404);
-  }
-
-  if (offer.status !== 'pending') {
-
-    throw new AppError(
-      'Only pending offers can be updated',
-      400
-    );
-
-  }
-  
-  await offer.update(data);
-
-  return offer;
-
-};
-
-exports.getMyOffers = async (farmerId) => {
-
-  const offers = await Offer.findAll({
-
-    where: {
-      farmer_id: farmerId,
-    },
-
-    order: [
-      ['created_at', 'DESC']
-    ],
-
-  });
-
-  return offers;
-
-};
-
 
 exports.deleteOffer = async (
   offerId,
@@ -169,7 +54,6 @@ exports.getOfferById = async (offerId) => {
   return offer;
 
 };
-
 
 
 exports.getApprovedOffers = async (
@@ -254,11 +138,6 @@ exports.rejectOffer = async (offerId) => {
   return offer;
 
 };
-
-
-
-
-
 
 
 

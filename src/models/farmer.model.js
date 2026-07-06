@@ -101,6 +101,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'user',
     });
 
+
+    Farmer.hasMany(models.Offer, {
+  as: 'offers',
+  foreignKey: 'farmer_id',
+});
+
   };
 
   return Farmer;

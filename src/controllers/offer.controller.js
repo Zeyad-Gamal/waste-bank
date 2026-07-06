@@ -157,3 +157,27 @@ exports.rejectOffer = asyncHandler(async (req, res) => {
 
 }
 );
+
+
+
+exports.getAllOffers = asyncHandler(async (req, res) => {
+
+
+
+    const page = parseInt(req.query.page) || 1;
+
+    const limit = parseInt(req.query.limit) || 10;
+
+    const result =
+      await offerService.getAllOffers(
+        page,
+        limit
+      );
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+
+}
+);
