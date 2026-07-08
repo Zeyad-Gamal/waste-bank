@@ -13,10 +13,19 @@ exports.getAllFarmers = asyncHandler(async (req, res) => {
 
     const limit = parseInt(req.query.limit) || 10;
 
+ const search = req.query.search || '';
+const activation = req.query.activation;
+const landType = req.query.landType;
+
+
+
     const result =
       await farmerService.getAllFarmers(
         page,
-        limit
+        limit,
+        search,
+        activation,
+        landType
       );
 
     res.status(200).json({

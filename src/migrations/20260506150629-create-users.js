@@ -10,6 +10,11 @@ module.exports = {
       password: Sequelize.STRING,
       role: Sequelize.ENUM('farmer', 'factory', 'admin'),
       phone: Sequelize.STRING,
+      is_active: {
+        type: Sequelize.ENUM('active', 'inactive'),
+        allowNull: false,
+        defaultValue: 'inactive',
+      },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }
     });
