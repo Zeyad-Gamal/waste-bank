@@ -14,15 +14,6 @@ const upload = require('../../utils/multer');
 
 
 
-const {
-  createOfferSchema,
-} = require('../../validations/offer.validation');
-
-const {
-  updateOfferSchema,
-} = require('../../validations/offer.validation');
-
-
 
 
 router.get(
@@ -32,31 +23,3 @@ router.get(
     
     farmerController.getAllFarmers
 );
-
-
-
-router.post(
-  '/',
-
-  upload.fields([
-    { name: 'national_id_image', maxCount: 1 },
-    { name: 'proof_image', maxCount: 1 },
-  ]),
-  farmerController.addFarmer
-);
-
-
-
-router.patch(
-  '/:id/status',
-
-
-
-  farmerController.updateFarmerStatus
-);
-
-
-
-
-
-module.exports = router;

@@ -28,6 +28,7 @@ const landType = req.query.landType;
         landType
       );
 
+      
     res.status(200).json({
       success: true,
       data: result,
@@ -60,4 +61,36 @@ exports.addFarmer = asyncHandler(async (req, res) => {
     });
 
 } 
+);
+
+
+exports.updateFarmerStatus = asyncHandler(async (req, res) => {
+
+    console.log('farmer id:', req.params.id)
+  console.log('new status:', req.body.status)
+
+  var activation = '';
+
+  if(req.body.status == true){
+    activation = 'active';
+  }
+  else if(req.body.status == false){
+    activation = 'inactive';
+  }
+
+  console.log('new status:', activation)
+
+    const result =
+      await farmerService.updateFarmerStatus(
+        req.params.id,
+        activation
+      );
+
+    res.status(200).json({
+      success: true,
+      message: 'status updated',
+      data: result,
+    });
+
+}
 );

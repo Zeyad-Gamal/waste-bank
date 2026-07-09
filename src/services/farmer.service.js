@@ -107,7 +107,7 @@ exports.addFarmer = async (data) => {
         phone: data.phone,
         password: hashedPassword,
         role: 'farmer',
-        is_active: 'active'
+        is_active: 'inactive'
       },
       { transaction }
     );
@@ -165,3 +165,59 @@ exports.addFarmer = async (data) => {
   }
 
 };
+
+
+exports.updateFarmerStatus = async (id , status) => {
+
+  const farmer = await User.findByPk(id);
+
+  if (!farmer) {
+    throw new AppError('farmer not found', 404);
+  }
+
+  farmer.is_active = status;
+
+  await farmer.save();
+
+  return farmer;
+
+};
+
+
+exports.deleteFarmer = async (id) => {
+
+
+  const user = await User.findOne({
+
+    where: {
+      id: id
+    },
+  });
+
+   if (!user) {
+    throw new AppError('Farmer not found', 404);
+  }
+
+  if (user.is_active !== 'active') {
+
+    throw new AppError(
+      'Only not active farmers can be deleted',
+      400
+    );
+
+  }
+
+   const farmer = await Farmer.findOne({
+
+    where: {
+      user_id: id
+    },
+
+  });
+
+
+  await farmer.destroy();
+  await user.destroy();
+
+};
+
