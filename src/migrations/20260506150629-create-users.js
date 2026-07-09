@@ -12,7 +12,7 @@ module.exports = {
       phone: Sequelize.STRING,
       is_active: {
         type: Sequelize.ENUM('active', 'inactive'),
-        allowNull: false,
+        allowNull: true,
         defaultValue: 'inactive',
       },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

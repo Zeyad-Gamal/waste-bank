@@ -35,3 +35,29 @@ const landType = req.query.landType;
 
 }
 );
+
+
+exports.addFarmer = asyncHandler(async (req, res) => {
+
+    const farmerData = {
+
+      ...req.body,
+
+      national_id_image:
+        req.files?.national_id_image?.[0]?.path || null,
+
+      proof_image:
+        req.files?.proof_image?.[0]?.path || null,
+
+    };
+
+    const result = await farmerService.addFarmer(farmerData);
+
+    res.status(201).json({
+      success: true,
+      message: 'Farmer registered successfully',
+      data: result,
+    });
+
+} 
+);

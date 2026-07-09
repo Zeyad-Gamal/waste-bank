@@ -35,6 +35,18 @@ router.get(
 
 
 
+router.post(
+  '/',
+
+  upload.fields([
+    { name: 'national_id_image', maxCount: 1 },
+    { name: 'proof_image', maxCount: 1 },
+  ]),
+  farmerController.addFarmer
+);
+
+
+
 
 
 module.exports = router;
