@@ -1,189 +1,57 @@
-const { Offer, OfferImage, User, sequelize } = require('../models');
-const AppError = require( '../utils/app-error');
+const express = require('express');
 
+const router = express.Router();
 
-exports.deleteOffer = async (
-  offerId,
-  farmerId
-) => {
+const offerController = require('../../controllers/offer.controller');
 
-   const offer = await Offer.findOne({
+const authMiddleware = require('../../middlewares/auth.middleware');
 
-    where: {
-      id: offerId,
-      farmer_id: farmerId,
-    },
 
-  });
 
-  if (!offer) {
-    throw new AppError('Offer not found', 404);
-  }
+router.get(
+  '/',
 
-  if (offer.status !== 'pending') {
+  offerController.getAllOffers
+);
 
-    throw new AppError(
-      'Only pending offers can be deleted',
-      400
-    );
 
-  }
 
-  await offer.destroy();
 
-};
 
+router.patch(
+  '/:id/approve',
 
-exports.getOfferById = async (offerId) => {
+  // authMiddleware,
 
-  const offer = await Offer.findByPk(offerId, {
+  // authorizeRoles('admin'),
 
-    include: [
-      {
-        model: OfferImage,
-        as: 'images',
-      },
-    ],
+  offerController.approveOffer
+);
 
-  });
 
-  if (!offer) {
-    throw new AppError('Offer not found', 404);
-  }
 
-  return offer;
+router.patch(
+  '/:id/reject',
 
-};
+  // authMiddleware,
 
+  // authorizeRoles('admin'),
 
-exports.getApprovedOffers = async (
-  page,
-  limit
-) => {
+  offerController.rejectOffer
+);
 
-  const offset = (page - 1) * limit;
 
-  const { count, rows } =
-    await Offer.findAndCountAll({
 
-      where: {
-        status: 'approved',
-      },
+router.delete(
+  '/:id',
 
-      include: [
-        {
-          model: OfferImage,
-          as: 'images',
-        },
-      ],
+  // authMiddleware,
 
-      order: [
-        ['created_at', 'DESC']
-      ],
+  // authorizeRoles('farmer'),
 
-      limit,
+  offerController.deleteOffer
+);
 
-      offset,
 
-    distinct: true,
 
-    });
-
-  return {
-
-    total: count,
-
-    current_page: page,
-
-    total_pages: Math.ceil(count / limit),
-
-    offers: rows,
-
-  };
-
-};
-
-
-
-exports.approveOffer = async (offerId) => {
-
-  const offer = await Offer.findByPk(offerId);
-
-  if (!offer) {
-    throw new AppError('Offer not found', 404);
-  }
-
-  offer.status = 'approved';
-
-  await offer.save();
-
-  return offer;
-
-};
-
-
-
-exports.rejectOffer = async (offerId) => {
-
-  const offer = await Offer.findByPk(offerId);
-
-  if (!offer) {
-    throw new AppError('Offer not found', 404);
-  }
-
-  offer.status = 'rejected';
-
-  await offer.save();
-
-  return offer;
-
-};
-
-
-
-exports.getAllOffers = async (
-  page,
-  limit
-) => {
-
-  const offset = (page - 1) * limit;
-
-  const { count, rows } =
-    await Offer.findAndCountAll({
-
-      include: [
-        {
-          model: OfferImage,
-          as: 'images',
-        },
-        {
-          model: User,
-          as: 'farmer'
-        }
-      ],
-
-      order: [
-        ['created_at', 'DESC']
-      ],
-
-      limit,
-
-      offset,
-
-    distinct: true,
-
-    });
-
-  return {
-
-    total: count,
-
-    current_page: page,
-
-    total_pages: Math.ceil(count / limit),
-
-    offers: rows,
-
-  };
-
-};
+module.exports = router;

@@ -1,4 +1,4 @@
-const farmerService = require('../services/farmer.service');
+const factoryService = require('../services/factory.service');
 const asyncHandler = require('../middlewares/async-handler.middleware');
 
 
@@ -13,19 +13,19 @@ exports.getAllFactories = asyncHandler(async (req, res) => {
 
     const limit = parseInt(req.query.limit) || 10;
 
- const search = req.query.search || '';
- const activation = req.query.activation;
- const landType = req.query.landType;
+    const search = req.query.search || '';
+    const activation = req.query.activation;
+    const industry_type = req.query.industryType;
 
 
 
     const result =
-      await farmerService.getAllFarmers(
+      await factoryService.getAllFactories(
         page,
         limit,
         search,
         activation,
-        landType
+        industry_type
       );
 
       
@@ -38,59 +38,68 @@ exports.getAllFactories = asyncHandler(async (req, res) => {
 );
 
 
-// exports.addFarmer = asyncHandler(async (req, res) => {
+exports.addFactory = asyncHandler(async (req, res) => {
 
-//     const farmerData = {
+    const factoryData = {
 
-//       ...req.body,
+      ...req.body,
 
-//       national_id_image:
-//         req.files?.national_id_image?.[0]?.path || null,
+      factory_image:
+        req.files?.factory_image?.[0]?.path || null,
 
-//       proof_image:
-//         req.files?.proof_image?.[0]?.path || null,
+    };
 
-//     };
+    const result = await factoryService.addFactory(factoryData);
 
-//     const result = await farmerService.addFarmer(farmerData);
+    res.status(201).json({
+      success: true,
+      message: 'Factory registered successfully',
+      data: result,
+    });
 
-//     res.status(201).json({
-//       success: true,
-//       message: 'Farmer registered successfully',
-//       data: result,
-//     });
-
-// } 
-// );
+} 
+);
 
 
-// exports.updateFarmerStatus = asyncHandler(async (req, res) => {
+exports.updateFactoryStatus = asyncHandler(async (req, res) => {
 
-//     console.log('farmer id:', req.params.id)
-//   console.log('new status:', req.body.status)
 
-//   var activation = '';
+  var activation = '';
 
-//   if(req.body.status == true){
-//     activation = 'active';
-//   }
-//   else if(req.body.status == false){
-//     activation = 'inactive';
-//   }
+  if(req.body.status == true){
+    activation = 'active';
+  }
+  else if(req.body.status == false){
+    activation = 'inactive';
+  }
 
-//   console.log('new status:', activation)
 
-//     const result =
-//       await farmerService.updateFarmerStatus(
-//         req.params.id,
-//         activation
-//       );
+    const result =
+      await factoryService.updateFarmerStatus(
+        req.params.id,
+        activation
+      );
 
-//     res.status(200).json({
-//       success: true,
-//       message: 'status updated',
-//       data: result,
-//     });
+    res.status(200).json({
+      success: true,
+      message: 'status updated',
+      data: result,
+    });
 
-// }
-// );
+}
+);
+
+exports.deleteFactory = asyncHandler(async (req, res) => {
+
+    
+    await factoryService.deleteFactory(
+      req.params.id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Factory deleted successfully',
+    });
+
+}
+);

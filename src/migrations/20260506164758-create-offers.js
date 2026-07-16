@@ -28,7 +28,11 @@ module.exports = {
       updated_at: {
   type: Sequelize.DATE,
   defaultValue: Sequelize.NOW
-}
+},
+deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      }
     });
   },
   async down(queryInterface) {

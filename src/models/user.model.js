@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'users',
 
       timestamps: true,
+      paranoid: true,
 
       createdAt: 'created_at',
       updatedAt: 'updated_at',
@@ -50,13 +51,19 @@ module.exports = (sequelize, DataTypes) => {
 
     User.hasOne(models.Farmer, {
       foreignKey: 'user_id',
-      as: 'farmer_profile',
+      as: 'farmer',
     });
 
     User.hasOne(models.Factory, {
       foreignKey: 'user_id',
-      as: 'factory_profile',
+      sourceKey: 'id',
+      as: 'factory',
     });
+
+    User.hasMany(models.Offer, {
+  foreignKey: 'farmer_id',
+  as: 'offers',
+});
 
   };
 

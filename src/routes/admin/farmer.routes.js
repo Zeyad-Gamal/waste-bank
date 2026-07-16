@@ -57,6 +57,14 @@ router.patch(
 
 
 
+router.delete(
+  '/:id',
+
+  farmerController.deleteFarmer
+);
+
+
+
 
 
 module.exports = router;

@@ -66,8 +66,7 @@ exports.addFarmer = asyncHandler(async (req, res) => {
 
 exports.updateFarmerStatus = asyncHandler(async (req, res) => {
 
-    console.log('farmer id:', req.params.id)
-  console.log('new status:', req.body.status)
+ 
 
   var activation = '';
 
@@ -78,7 +77,6 @@ exports.updateFarmerStatus = asyncHandler(async (req, res) => {
     activation = 'inactive';
   }
 
-  console.log('new status:', activation)
 
     const result =
       await farmerService.updateFarmerStatus(
@@ -90,6 +88,23 @@ exports.updateFarmerStatus = asyncHandler(async (req, res) => {
       success: true,
       message: 'status updated',
       data: result,
+    });
+
+}
+);
+
+
+
+exports.deleteFarmer = asyncHandler(async (req, res) => {
+
+    
+    await farmerService.deleteFarmer(
+      req.params.id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Farmer deleted successfully',
     });
 
 }

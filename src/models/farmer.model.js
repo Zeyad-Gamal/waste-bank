@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 },
       user_id: {
         type: DataTypes.UUID,
-        primaryKey: true,
+        // primaryKey: true,
 
         references: {
           model: 'users',

@@ -188,36 +188,20 @@ exports.deleteFarmer = async (id) => {
 
 
   const user = await User.findOne({
-
-    where: {
-      id: id
-    },
+    where: { id },
   });
 
-   if (!user) {
-    throw new AppError('Farmer not found', 404);
+  if (!user) {
+    throw new AppError("Farmer not found", 404);
   }
 
-  if (user.is_active !== 'active') {
-
+  if (user.is_active == "active") {
     throw new AppError(
-      'Only not active farmers can be deleted',
+      "Only not active farmers can be deleted",
       400
     );
-
   }
 
-   const farmer = await Farmer.findOne({
 
-    where: {
-      user_id: id
-    },
-
-  });
-
-
-  await farmer.destroy();
-  await user.destroy();
-
+  await user.destroy(); // sets deletedAt
 };
-

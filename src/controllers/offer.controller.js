@@ -168,10 +168,18 @@ exports.getAllOffers = asyncHandler(async (req, res) => {
 
     const limit = parseInt(req.query.limit) || 10;
 
+
+    const search = req.query.search || '';
+    const status = req.query.status;
+
+
+
     const result =
       await offerService.getAllOffers(
         page,
-        limit
+        limit,
+        search,
+        status
       );
 
     res.status(200).json({
@@ -181,3 +189,9 @@ exports.getAllOffers = asyncHandler(async (req, res) => {
 
 }
 );
+
+
+
+
+
+

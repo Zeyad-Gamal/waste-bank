@@ -88,6 +88,8 @@ module.exports = (sequelize, DataTypes) => {
 
       timestamps: true,
 
+      paranoid: true,
+
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     }
@@ -100,10 +102,16 @@ module.exports = (sequelize, DataTypes) => {
   as: 'images',
 });
 
-    Offer.belongsTo(models.User, {
-      foreignKey: 'farmer_id',
-      as: 'farmer',
-    });
+    // Offer.belongsTo(models.User, {
+    //   foreignKey: 'farmer_id',
+    //   as: 'farmer',
+    // });
+
+Offer.belongsTo(models.Farmer, {
+  foreignKey: 'farmer_id',
+  targetKey: 'user_id',
+  as: 'farmer',
+});
 
     Offer.hasMany(models.Purchase, {
       foreignKey: 'offer_id',

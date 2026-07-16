@@ -1,4 +1,5 @@
-const { Offer, OfferImage, User, sequelize } = require('../models');
+const { Op, Sequelize } = require('sequelize');
+const { Offer, OfferImage, User, Farmer, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 
 exports.createOffer = async (data) => {
@@ -261,50 +262,73 @@ exports.rejectOffer = async (offerId) => {
 
 
 
-
 exports.getAllOffers = async (
   page,
-  limit
+  limit,
+  search,
+  status
 ) => {
-
   const offset = (page - 1) * limit;
 
-  const { count, rows } =
-    await Offer.findAndCountAll({
+  const where = {};
 
-      include: [
-        {
-          model: OfferImage,
-          as: 'images',
+  if (status) {
+    where.status = status;
+  }
+
+  if (search) {
+    where[Op.or] = [
+      {
+        type: {
+          [Op.like]: `%${search}%`,
         },
+      },
+      Sequelize.where(
+        Sequelize.col('farmer.user.name'),
         {
-          model: User,
-          as: 'farmer'
+          [Op.like]: `%${search}%`,
         }
-      ],
+      ),
+    ];
+  }
 
-      order: [
-        ['created_at', 'DESC']
-      ],
+  const { count, rows } = await Offer.findAndCountAll({
+    where,
 
-      limit,
+    include: [
+      {
+        model: OfferImage,
+        as: 'images',
+      },
+      {
+        model: Farmer,
+        as: 'farmer',
+        required: true,
+        include: [
+          {
+            model: User,
+            as: 'user',
+            required: true,
+          },
+        ],
+      },
+    ],
 
-      offset,
+    order: [['created_at', 'DESC']],
 
+    limit,
+    offset,
     distinct: true,
-
-    });
+  });
 
   return {
-
     total: count,
-
     current_page: page,
-
     total_pages: Math.ceil(count / limit),
-
     offers: rows,
-
   };
-
 };
+
+
+
+

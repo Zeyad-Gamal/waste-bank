@@ -26,9 +26,9 @@ const {
 router.post(
   '/',
 
-  authMiddleware,
+  // authMiddleware,
 
-  authorizeRoles('farmer'),
+  // authorizeRoles('farmer'),
 
   upload.array('offer_images', 10),
 
@@ -66,15 +66,7 @@ router.get(
 );
 
 
-router.delete(
-  '/:id',
 
-  authMiddleware,
-
-  authorizeRoles('farmer'),
-
-  offerController.deleteOffer
-);
 
 
 router.get(
@@ -97,30 +89,6 @@ router.get(
 
 
 
-// dashboard
-
-router.patch(
-  '/:id/approve',
-
-  authMiddleware,
-
-  authorizeRoles('admin'),
-
-  offerController.approveOffer
-);
-
-
-
-
-router.patch(
-  '/:id/reject',
-
-  authMiddleware,
-
-  authorizeRoles('admin'),
-
-  offerController.rejectOffer
-);
 
 
 

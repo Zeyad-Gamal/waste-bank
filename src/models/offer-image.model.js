@@ -29,6 +29,13 @@ module.exports = (sequelize, DataTypes) => {
       image_url: {
         type: DataTypes.STRING,
         allowNull: false,
+        get() {
+    const value = this.getDataValue('image_url');
+
+    if (!value) return null;
+
+    return `${process.env.BASE_URL}/${value}`;
+  }
       },
 
     //   created_at: {
