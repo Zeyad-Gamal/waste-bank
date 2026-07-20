@@ -22,6 +22,9 @@ module.exports = {
 
       // category: Sequelize.STRING,
       remaining_quantity: Sequelize.FLOAT,
+
+      total_quantity: Sequelize.FLOAT,
+      
       quantity_gauge: { type: Sequelize.STRING, allowNull: false },
       status: Sequelize.STRING,
 

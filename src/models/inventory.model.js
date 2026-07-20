@@ -54,6 +54,13 @@ module.exports = (sequelize, DataTypes) => {
       //   allowNull: false,
       // },
 
+      
+      total_quantity: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      
+      
       remaining_quantity: {
         type: DataTypes.FLOAT,
         allowNull: false,

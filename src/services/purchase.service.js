@@ -4,6 +4,7 @@ const {
   User,
   Farmer,
   Inventory,
+  Unit,
   sequelize,
 } = require('../models');
 const { Op, Sequelize } = require('sequelize');
@@ -140,9 +141,13 @@ exports.createPurchase = async (data) => {
       );
     }
 
+
+    // const category = await Category.findByPk(data.category_id);
+
     // Create Purchase
     const purchase = await Purchase.create(
       {
+        unit_id: offer.unit_id,
         offer_id: data.offer_id,
         quantity: data.quantity,
         quantity_gauge: offer.quantity_gauge,
@@ -155,7 +160,7 @@ exports.createPurchase = async (data) => {
     // Find Inventory by Category
     let inventory = await Inventory.findOne({
       where: {
-        category: offer.item_type,
+        category_id: offer.category_id,
       },
       transaction,
     });
@@ -170,7 +175,9 @@ exports.createPurchase = async (data) => {
       // Create inventory for new category
       inventory = await Inventory.create(
         {
-          category: offer.item_type,
+          purchase_id: purchase.id,
+          category_id: offer.category_id,
+          unit_id: offer.unit_id,
           total_quantity: data.quantity,
           remaining_quantity: data.quantity,
           quantity_gauge: offer.quantity_gauge,
@@ -241,7 +248,16 @@ exports.getAllPurchases = async (
        model: Farmer, as: 'farmer',
        include: [{ model: User, as: 'user' }]
      }]
-          }],
+          },
+
+
+          {
+            model: Unit,
+            as: 'unit',
+          }
+        
+        
+        ],
 
         order: [
           ['created_at', 'DESC']

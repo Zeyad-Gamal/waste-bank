@@ -1,5 +1,5 @@
 const { Op, Sequelize } = require('sequelize');
-const { Offer, OfferImage, User, Farmer, sequelize } = require('../models');
+const { Offer, OfferImage, User, Farmer, Unit, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 
 exports.createOffer = async (data) => {
@@ -312,6 +312,10 @@ exports.getAllOffers = async (
           },
         ],
       },
+      {
+        model: Unit,
+        as: 'unit'
+      }
     ],
 
     order: [['created_at', 'DESC']],

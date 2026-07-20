@@ -1,5 +1,7 @@
 const {
   Inventory,
+  Unit,
+  Category
 } = require('../models');
 const AppError = require( '../utils/app-error');
 
@@ -21,19 +23,35 @@ const AppError = require( '../utils/app-error');
 
 exports.getInventory = async () => {
   const inventory = await Inventory.findAll({
+
+    include: [
+        {
+          model: Unit,
+          as: 'unit'
+        },
+
+        {
+      model: Category,
+      as: "category",
+      attributes: ["id", "name"],
+    }
+    ],
+
     order: [['created_at', 'DESC']],
   });
+
 
   return inventory.map(item => ({
     id: item.id,
     purchase_id: item.purchase_id,
-    category: item.category,
+    category: item.category.name,
 
-    total_quantity: item.quantity,
+    total_quantity: item.total_quantity,
     remaining_quantity: item.remaining_quantity,
 
-    quantity_gauge: item.quantity_gauge,
+    quantity_gauge: item.unit.name,
     status: item.status,
+    
 
     created_at: item.created_at,
     updated_at: item.updated_at,
