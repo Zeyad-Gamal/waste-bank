@@ -2,6 +2,8 @@ const service =
   require('../services/factory-request.service');
   const asyncHandler = require('../middlewares/async-handler.middleware');
 
+
+
 exports.createFactoryRequest = asyncHandler(async (req, res) => {
 
 
@@ -83,6 +85,88 @@ exports.cancelFactoryRequest = asyncHandler(async (req, res) => {
           req.params.id,
 
           req.user.id
+
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          'Factory request cancelled successfully',
+        data: result,
+      });
+
+}
+);
+
+
+exports.getAllRequests = asyncHandler(async (req, res) => {
+
+  const page = parseInt(req.query.page) || 1;
+
+    const limit = parseInt(req.query.limit) || 10;
+
+
+    const search = req.query.search || '';
+
+    const status = req.query.status || '';
+
+
+
+    const result =
+      await service.getAllRequests(
+        page,
+        limit,
+        search,
+        status
+      );
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+
+
+
+}
+);
+
+
+
+
+
+exports.updateRequestStatus = asyncHandler(async (req, res) => {
+
+
+      const result =
+        await service.updateRequestStatus(
+
+          req.params.id,
+          req.body.status
+
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          'Factory request updated successfully',
+        data: result,
+      });
+
+
+
+}
+);
+
+
+
+
+
+exports.adminCancelFactoryRequest = asyncHandler(async (req, res) => {
+
+      const result =
+        await service.adminCancelFactoryRequest(
+
+          req.params.id,
 
         );
 

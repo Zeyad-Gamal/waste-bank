@@ -9,9 +9,16 @@ module.exports = {
         type: Sequelize.UUID,
         references: { model: 'purchases', key: 'id' }
       },
+      category: Sequelize.STRING,
       remaining_quantity: Sequelize.FLOAT,
       quantity_gauge: { type: Sequelize.STRING, allowNull: false },
-      status: Sequelize.STRING
+      status: Sequelize.STRING,
+
+      created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
+      updated_at: {
+  type: Sequelize.DATE,
+  defaultValue: Sequelize.NOW
+},
     });
   },
   async down(queryInterface) {

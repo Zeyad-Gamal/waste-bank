@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
+            category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
 
       remaining_quantity: {
         type: DataTypes.FLOAT,

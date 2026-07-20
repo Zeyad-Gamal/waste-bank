@@ -9,11 +9,16 @@ module.exports = {
         type: Sequelize.UUID,
         references: { model: 'offers', key: 'id' }
       },
+      
       quantity: Sequelize.FLOAT,
       quantity_gauge: { type: Sequelize.STRING, allowNull: false },
       price: Sequelize.FLOAT,
       status: Sequelize.STRING,
-      created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }
+      created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
+      updated_at: {
+  type: Sequelize.DATE,
+  defaultValue: Sequelize.NOW
+},
     });
   },
   async down(queryInterface) {

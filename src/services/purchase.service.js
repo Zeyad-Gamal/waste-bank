@@ -1,13 +1,16 @@
 const {
   Purchase,
   Offer,
+  User,
+  Farmer,
   Inventory,
   sequelize,
 } = require('../models');
+const { Op, Sequelize } = require('sequelize');
+
 const AppError = require( '../utils/app-error');
 
-exports.createPurchase =
-  async (data) => {
+exports.createPurchase = async (data) => {
 
     const transaction =
       await sequelize.transaction();
@@ -44,6 +47,9 @@ exports.createPurchase =
 
           quantity: data.quantity,
 
+          quantity_gauge: data.quantity_gauge,
+
+
           price:
             data.price,
 
@@ -77,20 +83,24 @@ exports.createPurchase =
         inventory =
           await Inventory.create({
 
+            purchase_id: purchase.id,
+
             category:
               offer.item_type,
 
-            quantity:
+            remaining_quantity:
               data.quantity,
 
             quantity_gauge:
               offer.quantity_gauge,
 
+              
+
           }, { transaction });
 
       }
 
-      offer.status = 'purchased';
+      // offer.status = 'purchased';
 
       await offer.save({
         transaction,
@@ -110,26 +120,73 @@ exports.createPurchase =
 
 };
 
-exports.getAllPurchases =
-  async () => {
+exports.getAllPurchases = async (
 
-    const purchases =
-      await Purchase.findAll({
+  page,
+  limit,
+  search,
+  status
+
+) => {
+
+
+    const offset = (page - 1) * limit;
+
+  const purchaseWhere = {};
+
+
+
+  if (search) {
+  purchaseWhere[Op.or] = [
+    sequelize.where(sequelize.cast(sequelize.col('Purchase.price'), 'char'), { [Op.like]: `%${search}%` }),
+    { id: { [Op.like]: `%${search}%` } },
+    sequelize.where(sequelize.cast(sequelize.col('Purchase.quantity'), 'char'), { [Op.like]: `%${search}%` }),
+    { status: { [Op.like]: `%${search}%` } },
+    { quantity_gauge: { [Op.like]: `%${search}%` } },
+    { created_at: { [Op.like]: `%${search}%` } },
+    { '$offer.farmer.user.name$': { [Op.like]: `%${search}%` } },
+    { '$offer.id$': { [Op.like]: `%${search}%` } },
+    { '$offer.item_type$': { [Op.like]: `%${search}%` } }
+  ];
+}
+
+
+  if (status) {
+    purchaseWhere['status'] = status;
+  }
+    const {rows , count} =
+      await Purchase.findAndCountAll({
+
+        where: purchaseWhere,
 
         include: [
           {
             model: Offer,
             as: 'offer',
-          },
-        ],
+
+            include: [{
+       model: Farmer, as: 'farmer',
+       include: [{ model: User, as: 'user' }]
+     }]
+          }],
 
         order: [
           ['created_at', 'DESC']
         ],
 
+         limit,
+    offset,
+    distinct: true,
+
       });
 
-    return purchases;
+      return {
+    total: count,
+    current_page: page,
+    total_pages: Math.ceil(count / limit),
+    purchases: rows,
+  };
+
 
 };
 
@@ -160,8 +217,7 @@ exports.getMyPurchases =
 
 };
 
-exports.updatePurchaseStatus =
-  async (
+exports.updatePurchaseStatus = async (
     purchaseId,
     status
   ) => {
@@ -181,6 +237,98 @@ exports.updatePurchaseStatus =
     }
 
     purchase.status = status;
+
+    await purchase.save();
+
+    return purchase;
+
+};
+
+
+
+
+
+
+
+
+
+exports.approvePurchase = async (
+    purchaseId
+  ) => {
+
+    const purchase =
+      await Purchase.findByPk(
+        purchaseId
+      );
+
+    if (!purchase) {
+
+      throw new AppError(
+        'Purchase not found',
+        404
+      );
+
+    }
+
+    purchase.status = "approved";
+
+    await purchase.save();
+
+    return purchase;
+
+};
+
+
+exports.rejectPurchase = async (
+    purchaseId
+  ) => {
+
+    const purchase =
+      await Purchase.findByPk(
+        purchaseId
+      );
+
+    if (!purchase) {
+
+      throw new AppError(
+        'Purchase not found',
+        404
+      );
+
+    }
+
+    purchase.status = "rejected";
+
+    await purchase.save();
+
+    return purchase;
+
+};
+
+
+
+
+
+
+exports.completePurchase = async (
+    purchaseId
+  ) => {
+
+    const purchase =
+      await Purchase.findByPk(
+        purchaseId
+      );
+
+    if (!purchase) {
+
+      throw new AppError(
+        'Purchase not found',
+        404
+      );
+
+    }
+
+    purchase.status = "completed";
 
     await purchase.save();
 
