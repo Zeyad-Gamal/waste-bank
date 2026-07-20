@@ -23,10 +23,36 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-            category: {
-        type: DataTypes.STRING,
+
+      unit_id: {
+        type: DataTypes.UUID,
         allowNull: false,
+
+        references: {
+          model: 'units',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
+
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+
+        references: {
+          model: 'categories',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      //       category: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
 
       remaining_quantity: {
         type: DataTypes.FLOAT,
@@ -68,6 +94,16 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'inventory_id',
       as: 'sale_items',
     });
+
+    Inventory.belongsTo(models.Category, {
+    foreignKey: "category_id",
+    as: "category",
+});
+
+  Inventory.belongsTo(models.Unit, {
+    foreignKey: "unit_id",
+    as: "unit",
+});
 
   };
 

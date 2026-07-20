@@ -24,6 +24,20 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
       },
 
+
+      unit_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+
+        references: {
+          model: 'units',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+
       quantity: {
         type: DataTypes.FLOAT,
         allowNull: false,
@@ -75,6 +89,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'purchase_id',
       as: 'inventory',
     });
+
+    Purchase.belongsTo(models.Unit, {
+    foreignKey: "unit_id",
+    as: "unit",
+});
 
   };
 

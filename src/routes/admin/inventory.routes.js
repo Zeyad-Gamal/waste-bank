@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const purchaseController = require('../../controllers/purchase.controller');
+const inventoryController = require('../../controllers/inventory.controller');
 
 const authMiddleware = require('../../middlewares/auth.middleware');
 
@@ -30,47 +30,53 @@ router.get(
     
     // authMiddleware,
     
-    purchaseController.getAllPurchases
+    inventoryController.getInventory
 );
 
 
 
-router.post(
-  '/',
+// router.post(
+//   '/',
 
-  purchaseController.createPurchase
-);
-
-
-
-router.patch(
-  '/:id/approve',
+//   purchaseController.createPurchase
+// );
 
 
 
-  purchaseController.approvePurchase
-);
-
-
-router.patch(
-  '/:id/reject',
+// router.patch(
+//   '/:id/approve',
 
 
 
-  purchaseController.rejectPurchase
-);
+//   purchaseController.approvePurchase
+// );
+
+
+// router.patch(
+//   '/:id/reject',
 
 
 
-router.patch(
-  '/:id/complete',
+//   purchaseController.rejectPurchase
+// );
 
 
 
-  purchaseController.completePurchase
-);
+// router.patch(
+//   '/:id/complete',
 
 
+
+//   purchaseController.completePurchase
+// );
+
+
+
+// // router.delete(
+// //   '/:id',
+
+// //   farmerController.deleteFarmer
+// // );
 
 
 

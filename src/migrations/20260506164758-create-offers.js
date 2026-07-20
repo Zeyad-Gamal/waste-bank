@@ -9,6 +9,14 @@ module.exports = {
         type: Sequelize.UUID,
         references: { model: 'users', key: 'id' }
       },
+      category_id: {
+        type: Sequelize.UUID,
+        references: { model: 'categories', key: 'id' }
+      },
+      unit_id: {
+        type: Sequelize.UUID,
+        references: { model: 'units', key: 'id' }
+      },
       type: Sequelize.STRING,
       quantity: Sequelize.FLOAT,
       quantity_gauge: { type: Sequelize.STRING, allowNull: false },

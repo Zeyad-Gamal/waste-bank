@@ -19,6 +19,7 @@ const adminOfferRoutes = require('./routes/admin/offer.routes');
 const adminOfferImgsRoutes = require('./routes/admin/offerImages.routes');
 const adminFactoryRequestsRoutes = require('./routes/admin/factory-request.routes');
 const adminPurchasesRoutes = require('./routes/admin/purchase.routes');
+const adminInventoryRoutes = require('./routes/admin/inventory.routes');
 
 const errorMiddleware = require('./middlewares/error.middleware');
 
@@ -55,6 +56,7 @@ app.use('/api/admin/offers',adminOfferRoutes);
 app.use('/api/admin/offer-images',adminOfferImgsRoutes);
 app.use('/api/admin/requests',adminFactoryRequestsRoutes);
 app.use('/api/admin/purchases',adminPurchasesRoutes);
+app.use('/api/admin/inventory',adminInventoryRoutes);
 
 
 // Test route

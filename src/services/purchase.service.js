@@ -10,114 +10,187 @@ const { Op, Sequelize } = require('sequelize');
 
 const AppError = require( '../utils/app-error');
 
-exports.createPurchase = async (data) => {
+// exports.createPurchase = async (data) => {
 
-    const transaction =
-      await sequelize.transaction();
+//     const transaction =
+//       await sequelize.transaction();
 
-    try {
+//     try {
 
-      const offer =
-        await Offer.findByPk(
-          data.offer_id
-        );
+//       const offer =
+//         await Offer.findByPk(
+//           data.offer_id
+//         );
 
-      if (!offer) {
+//       if (!offer) {
 
-        throw new AppError(
-          'Offer not found',
-          404
-        );
+//         throw new AppError(
+//           'Offer not found',
+//           404
+//         );
 
-      }
+//       }
 
-      if (offer.status !== 'approved') {
+//       if (offer.status !== 'approved') {
 
-        throw new AppError(
-          'Only approved offers can be purchased',
-          400
-        );
+//         throw new AppError(
+//           'Only approved offers can be purchased',
+//           400
+//         );
 
-      }
+//       }
 
-      const purchase =
-        await Purchase.create({
+//       const purchase =
+//         await Purchase.create({
 
-          offer_id: data.offer_id,
+//           offer_id: data.offer_id,
 
-          quantity: data.quantity,
+//           quantity: data.quantity,
 
-          quantity_gauge: data.quantity_gauge,
+//           quantity_gauge: data.quantity_gauge,
 
 
-          price:
-            data.price,
+//           price:
+//             data.price,
 
-          status: 'pending',
+//           status: 'pending',
 
-        }, { transaction });
+//         }, { transaction });
 
-      let inventory =
-        await Inventory.findOne({
+//       let inventory =
+//         await Inventory.findOne({
 
-          where: {
-            category:
-              offer.item_type,
-          },
+//           where: {
+//             category:
+//               offer.item_type,
+//           },
 
-          transaction,
+//           transaction,
 
-        });
+//         });
 
-      if (inventory) {
+//       if (inventory) {
 
-        inventory.quantity +=
-          data.quantity;
+//         inventory.quantity +=
+//           data.quantity;
 
-        await inventory.save({
-          transaction,
-        });
+//         await inventory.save({
+//           transaction,
+//         });
 
-      } else {
+//       } else {
 
-        inventory =
-          await Inventory.create({
+//         inventory =
+//           await Inventory.create({
 
-            purchase_id: purchase.id,
+//             purchase_id: purchase.id,
 
-            category:
-              offer.item_type,
+//             category:
+//               offer.item_type,
 
-            remaining_quantity:
-              data.quantity,
+//             remaining_quantity:
+//               data.quantity,
 
-            quantity_gauge:
-              offer.quantity_gauge,
+//             quantity_gauge:
+//               offer.quantity_gauge,
 
               
 
-          }, { transaction });
+//           }, { transaction });
 
-      }
+//       }
 
-      // offer.status = 'purchased';
+//       // offer.status = 'purchased';
 
-      await offer.save({
-        transaction,
-      });
+//       await offer.save({
+//         transaction,
+//       });
 
-      await transaction.commit();
+//       await transaction.commit();
 
-      return purchase;
+//       return purchase;
 
-    } catch (error) {
+//     } catch (error) {
 
-      await transaction.rollback();
+//       await transaction.rollback();
 
-      throw error;
+//       throw error;
 
+//     }
+
+// };
+
+
+
+exports.createPurchase = async (data) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    // Get Offer
+    const offer = await Offer.findByPk(data.offer_id);
+
+    if (!offer) {
+      throw new AppError("Offer not found", 404);
     }
 
+    if (offer.status !== "approved") {
+      throw new AppError(
+        "Only approved offers can be purchased",
+        400
+      );
+    }
+
+    // Create Purchase
+    const purchase = await Purchase.create(
+      {
+        offer_id: data.offer_id,
+        quantity: data.quantity,
+        quantity_gauge: offer.quantity_gauge,
+        price: data.price,
+        status: "pending",
+      },
+      { transaction }
+    );
+
+    // Find Inventory by Category
+    let inventory = await Inventory.findOne({
+      where: {
+        category: offer.item_type,
+      },
+      transaction,
+    });
+
+    if (inventory) {
+      // Update current stock
+      inventory.total_quantity += data.quantity;
+      inventory.remaining_quantity += data.quantity;
+
+      await inventory.save({ transaction });
+    } else {
+      // Create inventory for new category
+      inventory = await Inventory.create(
+        {
+          category: offer.item_type,
+          total_quantity: data.quantity,
+          remaining_quantity: data.quantity,
+          quantity_gauge: offer.quantity_gauge,
+          status: "available",
+        },
+        { transaction }
+      );
+    }
+
+    // Optional: Mark offer as purchased
+    // offer.status = "purchased";
+    await offer.save({ transaction });
+
+    await transaction.commit();
+
+    return purchase;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 };
 
 exports.getAllPurchases = async (

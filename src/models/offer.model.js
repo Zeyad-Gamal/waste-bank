@@ -24,6 +24,33 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
       },
 
+      unit_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+
+        references: {
+          model: 'units',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+
+
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+
+        references: {
+          model: 'categories',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+
       type: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -117,6 +144,20 @@ Offer.belongsTo(models.Farmer, {
       foreignKey: 'offer_id',
       as: 'purchases',
     });
+
+
+
+
+    Offer.belongsTo(models.Category, {
+    foreignKey: "category_id",
+    as: "category",
+});
+
+Offer.belongsTo(models.Unit, {
+    foreignKey: "unit_id",
+    as: "unit",
+});
+
 
   };
 
