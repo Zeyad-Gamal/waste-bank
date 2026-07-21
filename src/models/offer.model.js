@@ -61,20 +61,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
-      quantity_gauge: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+
 
       cultivated_area: {
         type: DataTypes.STRING,
         allowNull: false,
       },
 
-      item_type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
 
 
       harvest_date: {

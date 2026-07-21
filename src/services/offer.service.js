@@ -1,5 +1,5 @@
 const { Op, Sequelize } = require('sequelize');
-const { Offer, OfferImage, User, Farmer, Unit, sequelize } = require('../models');
+const { Offer, OfferImage, User, Farmer, Unit, Category, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 
 exports.createOffer = async (data) => {
@@ -8,19 +8,26 @@ exports.createOffer = async (data) => {
 
   try {
 
+    // const category_id =  
+
+    const category_data = await Category.findByPk(category);
+
+
     const offer = await Offer.create({
 
       farmer_id: data.farmer_id,
+
+      category_id: data.category,
+
+      unit_id: category_data.default_unit_id,
 
       type: data.type,
 
       quantity: data.quantity,
 
-      quantity_gauge: data.quantity_gauge,
 
       cultivated_area: data.cultivated_area,
 
-      item_type: data.item_type,
 
       harvest_date: data.harvest_date,
 
@@ -107,6 +114,22 @@ exports.getMyOffers = async (farmerId) => {
       farmer_id: farmerId,
     },
 
+    include:[
+
+      {
+        model: Category,
+        as: 'category',
+
+        include:[
+          {
+            model: Unit,
+            as: 'unit'
+          }
+        ]
+      }
+
+    ],
+
     order: [
       ['created_at', 'DESC']
     ],
@@ -159,6 +182,19 @@ exports.getOfferById = async (offerId) => {
         model: OfferImage,
         as: 'images',
       },
+
+
+      {
+        model: Category,
+        as: 'category',
+
+        include:[
+          {
+            model: Unit,
+            as: 'unit'
+          }
+        ]
+      }
     ],
 
   });
@@ -192,6 +228,18 @@ exports.getApprovedOffers = async (
           model: OfferImage,
           as: 'images',
         },
+
+        {
+          model: Category,
+          as: 'category',
+
+          include:[
+            {
+              model: Unit,
+              as: 'unit'
+            }
+          ]
+        }
       ],
 
       order: [
@@ -313,9 +361,16 @@ exports.getAllOffers = async (
         ],
       },
       {
-        model: Unit,
-        as: 'unit'
-      }
+          model: Category,
+          as: 'category',
+
+          include:[
+            {
+              model: Unit,
+              as: 'unit'
+            }
+          ]
+        }
     ],
 
     order: [['created_at', 'DESC']],

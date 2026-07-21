@@ -10,8 +10,7 @@ exports.createPurchaseSchema =
     quantity: Joi.number()
       .required(),
 
-    quantity_gauge: Joi.string()
-      .required(),
+
 
     price: Joi.number()
       .required(),

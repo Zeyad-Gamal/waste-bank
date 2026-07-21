@@ -5,6 +5,7 @@ const {
   Farmer,
   Inventory,
   Unit,
+  Category,
   sequelize,
 } = require('../models');
 const { Op, Sequelize } = require('sequelize');
@@ -150,7 +151,6 @@ exports.createPurchase = async (data) => {
         unit_id: offer.unit_id,
         offer_id: data.offer_id,
         quantity: data.quantity,
-        quantity_gauge: offer.quantity_gauge,
         price: data.price,
         status: "pending",
       },
@@ -180,7 +180,6 @@ exports.createPurchase = async (data) => {
           unit_id: offer.unit_id,
           total_quantity: data.quantity,
           remaining_quantity: data.quantity,
-          quantity_gauge: offer.quantity_gauge,
           status: "available",
         },
         { transaction }
@@ -222,11 +221,10 @@ exports.getAllPurchases = async (
     { id: { [Op.like]: `%${search}%` } },
     sequelize.where(sequelize.cast(sequelize.col('Purchase.quantity'), 'char'), { [Op.like]: `%${search}%` }),
     { status: { [Op.like]: `%${search}%` } },
-    { quantity_gauge: { [Op.like]: `%${search}%` } },
+    
     { created_at: { [Op.like]: `%${search}%` } },
     { '$offer.farmer.user.name$': { [Op.like]: `%${search}%` } },
     { '$offer.id$': { [Op.like]: `%${search}%` } },
-    { '$offer.item_type$': { [Op.like]: `%${search}%` } }
   ];
 }
 
@@ -279,8 +277,7 @@ exports.getAllPurchases = async (
 
 };
 
-exports.getMyPurchases =
-  async (farmerId) => {
+exports.getMyPurchases = async (farmerId) => {
 
     const purchases =
       await Purchase.findAll({
@@ -294,6 +291,11 @@ exports.getMyPurchases =
               farmer_id: farmerId,
             },
           },
+
+          {
+            model: Unit,
+            as: 'unit'
+          }
         ],
 
         order: [

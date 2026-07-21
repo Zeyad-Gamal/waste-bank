@@ -9,8 +9,7 @@ exports.createFactoryRequestSchema =
     quantity: Joi.number()
       .required(),
 
-    quantity_gauge: Joi.string()
-      .required(),
+
 
     max_price: Joi.number()
       .required(),
@@ -25,7 +24,6 @@ exports.createFactoryRequestSchema =
 
     quantity: Joi.number(),
 
-    quantity_gauge: Joi.string(),
 
     max_price: Joi.number(),
 

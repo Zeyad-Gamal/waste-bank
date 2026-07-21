@@ -49,7 +49,7 @@ exports.getInventory = async () => {
     total_quantity: item.total_quantity,
     remaining_quantity: item.remaining_quantity,
 
-    quantity_gauge: item.unit.name,
+    quantity_unit: item.unit.name,
     status: item.status,
     
 
@@ -61,9 +61,21 @@ exports.getInventory = async () => {
 exports.getInventoryItem = async (inventoryId) => {
 
     const item =
-      await Inventory.findByPk(
-        inventoryId
-      );
+      await Inventory.findByPk( inventoryId,{
+        include:[
+          {
+            model: Category,
+            as: 'category',
+
+            include:[
+              {
+                model: Unit,
+                as: 'unit'
+              }
+            ]
+          },
+        ]
+      });
 
     if (!item) {
 

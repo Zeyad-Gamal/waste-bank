@@ -20,12 +20,10 @@ module.exports = {
         references: { model: 'categories', key: 'id' }
       },
 
-      // category: Sequelize.STRING,
       remaining_quantity: Sequelize.FLOAT,
 
       total_quantity: Sequelize.FLOAT,
       
-      quantity_gauge: { type: Sequelize.STRING, allowNull: false },
       status: Sequelize.STRING,
 
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

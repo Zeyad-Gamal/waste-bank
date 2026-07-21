@@ -1,6 +1,6 @@
 const { where , Op, Sequelize  } = require('sequelize');
 const {
-  FactoryRequest, Factory , User
+  FactoryRequest, Factory , User , Category , Unit
 } = require('../models');
 const AppError = require( '../utils/app-error');
 
@@ -12,12 +12,9 @@ exports.createFactoryRequest = async (data) => {
 
         factory_id: data.factory_id,
 
-        category: data.category,
+        category_id: data.category_id,
 
         quantity: data.quantity,
-
-        quantity_gauge:
-          data.quantity_gauge,
 
         max_price: data.max_price,
 
@@ -41,6 +38,22 @@ exports.getMyRequests = async (
       where: {
         factory_id: factoryId,
       },
+
+      include: [
+
+        {
+          model: Category,
+          as: 'category',
+
+          include: [
+            {
+            model: Unit,
+            as: 'unit'
+            }
+          ]
+        }
+
+      ],
 
       order: [
         ['created_at', 'DESC']
@@ -195,8 +208,20 @@ exports.getAllRequests = async (
               exclude: ['password', 'created_at', 'updated_at', 'id']
             },
             required: true
-          }
+          },
+          {
+          model: Category,
+          as: 'category',
+
+          include: [
+            {
+            model: Unit,
+            as: 'unit'
+            }
+          ]
+        }
         ]
+        
       }
 
       ],

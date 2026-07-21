@@ -24,20 +24,26 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
       },
 
-      category: {
-        type: DataTypes.STRING,
-        allowNull: true,
+
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+
+        references: {
+          model: 'categories',
+          key: 'id',
+        },
+
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
+
 
       quantity: {
         type: DataTypes.FLOAT,
         allowNull: true,
       },
 
-      quantity_gauge: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
 
       max_price: {
         type: DataTypes.FLOAT,
@@ -67,6 +73,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'factory_id',
       targetKey: 'user_id',
       as: 'factory',
+    });
+
+
+    FactoryRequest.belongsTo(models.Category, {
+      foreignKey: 'category_id',
+      targetKey: 'id',
+      as: 'category',
     });
 
     FactoryRequest.hasMany(models.Sale, {

@@ -8,8 +8,6 @@ exports.createOfferSchema = Joi.object({
   quantity: Joi.number()
     .required(),
 
-  quantity_gauge: Joi.string()
-    .required(),
 
   cultivated_area: Joi.number()
     .required(),
@@ -39,7 +37,6 @@ exports.updateOfferSchema = Joi.object({
 
   quantity: Joi.number(),
 
-  quantity_gauge: Joi.string(),
 
   cultivated_area: Joi.number(),
 

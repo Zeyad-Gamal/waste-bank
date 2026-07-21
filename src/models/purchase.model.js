@@ -43,11 +43,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
-      quantity_gauge: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-
 
 
       price: {

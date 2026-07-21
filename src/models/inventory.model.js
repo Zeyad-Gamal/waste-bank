@@ -49,10 +49,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      //       category: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
 
       
       total_quantity: {
@@ -66,10 +62,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       
-      quantity_gauge: {
-  type: DataTypes.ENUM('kg', 'ton'),
-  allowNull: false,
-},
+
 
       status: {
         type: DataTypes.ENUM(
