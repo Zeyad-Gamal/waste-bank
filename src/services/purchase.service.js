@@ -158,37 +158,37 @@ exports.createPurchase = async (data) => {
     );
 
     // Find Inventory by Category
-    let inventory = await Inventory.findOne({
-      where: {
-        category_id: offer.category_id,
-      },
-      transaction,
-    });
+    // let inventory = await Inventory.findOne({
+    //   where: {
+    //     category_id: offer.category_id,
+    //   },
+    //   transaction,
+    // });
 
-    if (inventory) {
-      // Update current stock
-      inventory.total_quantity += data.quantity;
-      inventory.remaining_quantity += data.quantity;
+    // if (inventory) {
+    //   // Update current stock
+    //   inventory.total_quantity += data.quantity;
+    //   inventory.remaining_quantity += data.quantity;
 
-      await inventory.save({ transaction });
-    } else {
-      // Create inventory for new category
-      inventory = await Inventory.create(
-        {
-          purchase_id: purchase.id,
-          category_id: offer.category_id,
-          unit_id: offer.unit_id,
-          total_quantity: data.quantity,
-          remaining_quantity: data.quantity,
-          status: "available",
-        },
-        { transaction }
-      );
-    }
+    //   await inventory.save({ transaction });
+    // } else {
+    //   // Create inventory for new category
+    //   inventory = await Inventory.create(
+    //     {
+    //       purchase_id: purchase.id,
+    //       category_id: offer.category_id,
+    //       unit_id: offer.unit_id,
+    //       total_quantity: data.quantity,
+    //       remaining_quantity: data.quantity,
+    //       status: "available",
+    //     },
+    //     { transaction }
+    //   );
+    // }
 
     // Optional: Mark offer as purchased
     // offer.status = "purchased";
-    await offer.save({ transaction });
+    // await offer.save({ transaction });
 
     await transaction.commit();
 
@@ -242,10 +242,25 @@ exports.getAllPurchases = async (
             model: Offer,
             as: 'offer',
 
-            include: [{
+            include: [
+              
+              {
        model: Farmer, as: 'farmer',
-       include: [{ model: User, as: 'user' }]
-     }]
+       include: [
+        
+        { model: User, 
+          as: 'user' 
+        }
+        
+        ]
+     },
+    
+     {
+      model: Category,
+      as: 'category'
+     }
+    
+    ]
           },
 
 
@@ -401,28 +416,60 @@ exports.rejectPurchase = async (
 
 
 
-exports.completePurchase = async (
-    purchaseId
-  ) => {
+exports.completePurchase = async (purchaseId) => {
+  const transaction = await sequelize.transaction();
 
-    const purchase =
-      await Purchase.findByPk(
-        purchaseId
-      );
+  try {
+    const purchase = await Purchase.findByPk(purchaseId, {
+      transaction,
+    });
 
     if (!purchase) {
+      throw new AppError("Purchase not found", 404);
+    }
 
-      throw new AppError(
-        'Purchase not found',
-        404
+    const offer = await Offer.findByPk(purchase.offer_id, {
+      transaction,
+    });
+
+    if (!offer) {
+      throw new AppError("Offer not found", 404);
+    }
+
+    let inventory = await Inventory.findOne({
+      where: {
+        category_id: offer.category_id,
+      },
+      transaction,
+    });
+
+    if (inventory) {
+      inventory.total_quantity += purchase.quantity;
+      inventory.remaining_quantity += purchase.quantity;
+
+      await inventory.save({ transaction });
+    } else {
+      inventory = await Inventory.create(
+        {
+          purchase_id: purchase.id,
+          category_id: offer.category_id,
+          unit_id: purchase.unit_id,
+          total_quantity: purchase.quantity,
+          remaining_quantity: purchase.quantity,
+          status: "available",
+        },
+        { transaction }
       );
-
     }
 
     purchase.status = "completed";
+    await purchase.save({ transaction });
 
-    await purchase.save();
+    await transaction.commit();
 
     return purchase;
-
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 };

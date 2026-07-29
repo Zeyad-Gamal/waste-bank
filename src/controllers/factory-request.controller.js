@@ -12,7 +12,7 @@ exports.createFactoryRequest = asyncHandler(async (req, res) => {
 
           ...req.body,
 
-          factory_id: req.user.id,
+          // factory_id: req.user.id,
 
         });
 

@@ -3,7 +3,9 @@ const {
   Sale,
   SaleItem,
   Inventory,
+  Factory,
   FactoryRequest,
+  User,
   sequelize
 } = require('../models');
 const AppError = require( '../utils/app-error');
@@ -91,7 +93,29 @@ exports.createSale = async (data) => {
 exports.getSales = async (page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
 
+
+
+
   return await Sale.findAndCountAll({
+
+    include:[
+      {
+        model: Factory,
+        as: 'factory',
+
+        include: [
+          {
+            model: User,
+          as: 'user'
+          }
+        ]
+      },
+      {
+        model: SaleItem,
+        as: 'items'
+      }
+    ],
+
     limit,
     offset,
 

@@ -10,14 +10,14 @@ exports.createOffer = async (data) => {
 
     // const category_id =  
 
-    const category_data = await Category.findByPk(category);
+    const category_data = await Category.findByPk(data.category_id);
 
 
     const offer = await Offer.create({
 
       farmer_id: data.farmer_id,
 
-      category_id: data.category,
+      category_id: data.category_id,
 
       unit_id: category_data.default_unit_id,
 
@@ -367,7 +367,7 @@ exports.getAllOffers = async (
           include:[
             {
               model: Unit,
-              as: 'unit'
+              as: 'defaultUnit'
             }
           ]
         }

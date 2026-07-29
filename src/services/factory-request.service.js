@@ -208,21 +208,22 @@ exports.getAllRequests = async (
               exclude: ['password', 'created_at', 'updated_at', 'id']
             },
             required: true
-          },
-          {
+          }
+        ]
+        
+      }
+      ,
+        {
           model: Category,
           as: 'category',
 
           include: [
             {
             model: Unit,
-            as: 'unit'
+            as: 'defaultUnit'
             }
           ]
         }
-        ]
-        
-      }
 
       ],
       

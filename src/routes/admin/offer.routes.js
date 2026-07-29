@@ -6,6 +6,33 @@ const offerController = require('../../controllers/offer.controller');
 
 const authMiddleware = require('../../middlewares/auth.middleware');
 
+const validate = require('../../middlewares/validation.middleware');
+
+const upload = require('../../utils/multer');
+
+
+const {
+  createOfferSchema,
+} = require('../../validations/offer.validation');
+
+const {
+  updateOfferSchema,
+} = require('../../validations/offer.validation');
+
+
+
+router.post(
+  '/',
+
+  // authMiddleware,
+
+  // authorizeRoles('farmer'),
+
+  upload.array('offer_images', 10),
+
+
+  offerController.createOffer
+);
 
 
 router.get(
