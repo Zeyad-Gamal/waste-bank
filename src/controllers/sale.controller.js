@@ -12,10 +12,17 @@ exports.createSale = asyncHandler(async (req, res) => {
 });
 
 exports.getSales = asyncHandler(async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
 
-  const result = await service.getSales(page, limit);
+
+  const page = parseInt(req.query.page) || 1;
+
+    const limit = parseInt(req.query.limit) || 10;
+
+
+    const search = req.query.search || '';
+
+
+  const result = await service.getSales(page, limit, search);
 
   res.json({
     success: true,
@@ -45,3 +52,21 @@ exports.updateStatus = asyncHandler(async (req, res) => {
     data: result
   });
 });
+
+
+exports.updateSale = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sale = await service.updateSale(id, req.body);
+
+    res.status(200).json({
+      success: true,
+      data: sale
+    });
+  } catch (err) {
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || 'Failed to update sale'
+    });
+  }
+};

@@ -63,4 +63,17 @@ router.patch(
   controller.updateStatus
 );
 
+
+
+router.put(
+  '/:id',
+
+//   authMiddleware,
+
+//   authorizeRoles('factory'),
+
+  controller.updateSale
+);
+
+
 module.exports = router;

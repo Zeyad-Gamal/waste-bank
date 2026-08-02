@@ -1,3 +1,4 @@
+const { where , Op, Sequelize  } = require('sequelize');
 
 const {
   Sale,
@@ -90,13 +91,50 @@ exports.createSale = async (data) => {
   }
 };
 
-exports.getSales = async (page = 1, limit = 10) => {
+exports.getSales = async (
+  page,
+  limit,
+  search,
+) => {
+ 
+
+  
   const offset = (page - 1) * limit;
 
-
+  const where = {};
+  
+  
+if (search) {
+  where[Op.or] = [
+    {
+      id: {
+        [Op.like]: `%${search}%`,
+      },
+    },
+    {
+      '$factory.user.name$': {
+        [Op.like]: `%${search}%`,
+      },
+    },
+    Sequelize.where(
+      Sequelize.fn(
+        'DATE_FORMAT',
+        Sequelize.col('Sale.created_at'),
+        '%Y-%m-%d'
+      ),
+      {
+        [Op.like]: `%${search}%`,
+      }
+    ),
+  ];
+}
 
 
   return await Sale.findAndCountAll({
+
+    where,
+    subQuery: false,
+    distinct: true,
 
     include:[
       {
@@ -106,7 +144,12 @@ exports.getSales = async (page = 1, limit = 10) => {
         include: [
           {
             model: User,
-          as: 'user'
+          as: 'user',
+
+          attributes: {
+              exclude: ['password', 'created_at', 'updated_at', 'id']
+            },
+            required: true
           }
         ]
       },
@@ -177,4 +220,66 @@ exports.updateStatus = async (saleId, status) => {
   await sale.save();
 
   return sale;
+};
+
+
+exports.updateSale = async (id, data) => {
+  const { factory_id, request_id, items } = data;
+
+  const t = await sequelize.transaction();
+
+  try {
+    const sale = await Sale.findByPk(id, { transaction: t });
+
+    if (!sale) {
+      await t.rollback();
+      const error = new Error('Sale not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await sale.update(
+      {
+        factory_id: factory_id ?? sale.factory_id,
+        request_id: request_id ?? sale.request_id
+      },
+      { transaction: t }
+    );
+
+
+    if (Array.isArray(items) && items.length) {
+      await SaleItem.destroy({
+        where: { sale_id: id },
+        transaction: t
+      });
+
+      const newItems = items.map(item => ({
+        sale_id: id,
+        inventory_id: item.inventory_id,
+        quantity: item.quantity
+      }));
+
+      await SaleItem.bulkCreate(newItems, { transaction: t });
+    }
+
+    await t.commit();
+
+
+    return await Sale.findByPk(id, {
+      include: [
+        {
+          model: Factory,
+          as: 'factory'
+        },
+        {
+          model: SaleItem,
+          as: 'items'
+        }
+      ]
+    });
+
+  } catch (err) {
+    await t.rollback();
+    throw err;
+  }
 };
