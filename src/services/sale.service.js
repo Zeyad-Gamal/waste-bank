@@ -6,6 +6,7 @@ const {
   Inventory,
   Factory,
   FactoryRequest,
+  Category,
   User,
   sequelize
 } = require('../models');
@@ -45,7 +46,8 @@ exports.createSale = async (data) => {
       const inventory = await Inventory.findByPk(
         item.inventory_id,
         {
-          transaction
+          transaction,
+          lock: transaction.LOCK.UPDATE
         }
       );
 
@@ -53,11 +55,11 @@ exports.createSale = async (data) => {
         throw new AppError('Inventory not found', 404);
       }
 
-      if (inventory.quantity < item.quantity) {
+      if (inventory.remaining_quantity < item.quantity) {
         throw new AppError('Insufficient quantity', 400);
       }
 
-      inventory.quantity -= item.quantity;
+      inventory.remaining_quantity -= item.quantity;
 
       await inventory.save({
         transaction
@@ -67,7 +69,8 @@ exports.createSale = async (data) => {
         {
           sale_id: sale.id,
           inventory_id: item.inventory_id,
-          quantity: item.quantity
+          quantity: item.quantity,
+          price:item.price
         },
         {
           transaction
@@ -131,44 +134,51 @@ if (search) {
 
 
   return await Sale.findAndCountAll({
-
-    where,
-    subQuery: false,
-    distinct: true,
-
-    include:[
-      {
-        model: Factory,
-        as: 'factory',
-
-        include: [
-          {
-            model: User,
-          as: 'user',
-
-          attributes: {
-              exclude: ['password', 'created_at', 'updated_at', 'id']
-            },
-            required: true
-          }
-        ]
-      },
-      {
-        model: SaleItem,
-        as: 'items'
-      }
-    ],
-
-    limit,
-    offset,
-
-    order: [
+  attributes: {
+    include: [
       [
-        'created_at',
-        'DESC'
-      ]
-    ]
-  });
+        Sequelize.literal(`
+          (
+            SELECT COALESCE(SUM(price * quantity), 0)
+            FROM sale_items
+            WHERE sale_items.sale_id = Sale.id
+          )
+        `),
+        "totalPrice",
+      ],
+    ],
+  },
+
+  where,
+  subQuery: false,
+  distinct: true,
+
+  include: [
+    {
+      model: Factory,
+      as: "factory",
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: {
+            exclude: ["password", "created_at", "updated_at", "id"],
+          },
+          required: true,
+        },
+      ],
+    },
+    {
+      model: SaleItem,
+      as: "items",
+    },
+  ],
+
+  limit,
+  offset,
+
+  order: [["created_at", "DESC"]],
+});
 };
 
 exports.getFactorySales = async (factoryId) => {
@@ -224,46 +234,112 @@ exports.updateStatus = async (saleId, status) => {
 
 
 exports.updateSale = async (id, data) => {
+
+  
   const { factory_id, request_id, items } = data;
 
-  const t = await sequelize.transaction();
+  const transaction = await sequelize.transaction();
 
   try {
-    const sale = await Sale.findByPk(id, { transaction: t });
+    const sale = await Sale.findByPk(id, {
+      transaction
+    });
 
     if (!sale) {
-      await t.rollback();
-      const error = new Error('Sale not found');
-      error.statusCode = 404;
-      throw error;
+      throw new AppError('Sale not found', 404);
     }
 
+    // تحديث بيانات البيع
     await sale.update(
       {
         factory_id: factory_id ?? sale.factory_id,
         request_id: request_id ?? sale.request_id
       },
-      { transaction: t }
+      {
+        transaction
+      }
     );
 
-
-    if (Array.isArray(items) && items.length) {
-      await SaleItem.destroy({
-        where: { sale_id: id },
-        transaction: t
+    if (Array.isArray(items)) {
+      // استرجاع العناصر القديمة
+      const oldItems = await SaleItem.findAll({
+        where: {
+          sale_id: id
+        },
+        transaction
       });
 
-      const newItems = items.map(item => ({
-        sale_id: id,
-        inventory_id: item.inventory_id,
-        quantity: item.quantity
-      }));
+      // إعادة الكميات للمخزن
+      for (const oldItem of oldItems) {
+        const inventory = await Inventory.findByPk(
+          oldItem.inventory_id,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE
+          }
+        );
 
-      await SaleItem.bulkCreate(newItems, { transaction: t });
+        if (!inventory) {
+          throw new AppError('Inventory not found', 404);
+        }
+
+        inventory.remaining_quantity += oldItem.quantity;
+
+        await inventory.save({
+          transaction
+        });
+      }
+
+      // حذف العناصر القديمة
+      await SaleItem.destroy({
+        where: {
+          sale_id: id
+        },
+        transaction
+      });
+
+      // إضافة العناصر الجديدة وخصم الكميات
+      for (const item of items) {
+
+        const inventory = await Inventory.findByPk(
+          item.inventory_id,
+          {
+            transaction,
+            lock: transaction.LOCK.UPDATE
+          }
+        );
+
+        if (!inventory) {
+          throw new AppError('Inventory not found', 404);
+        }
+
+        if (inventory.remaining_quantity < item.quantity) {
+          throw new AppError('Insufficient quantity', 400);
+        }
+
+                
+
+        inventory.remaining_quantity -= item.quantity;
+
+        await inventory.save({
+          transaction
+        });
+
+        await SaleItem.create(
+          {
+            sale_id: id,
+            inventory_id: item.inventory_id,
+            quantity: item.quantity,
+            price: item.price
+          },
+          {
+            transaction
+          }
+        );
+      }
     }
 
-    await t.commit();
-
+    await transaction.commit();
 
     return await Sale.findByPk(id, {
       include: [
@@ -277,9 +353,91 @@ exports.updateSale = async (id, data) => {
         }
       ]
     });
-
-  } catch (err) {
-    await t.rollback();
-    throw err;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
   }
+};
+
+
+
+
+exports.getSaleItems = async () => {
+
+  
+    return await SaleItem.findAndCountAll({
+
+  subQuery: false,
+  distinct: true,
+
+  include: [
+    {
+      model: Inventory,
+      as: "inventory",
+      
+
+      attributes: [
+        'id'
+      ],
+
+      include: [
+        {
+          model: Category,
+          as: 'category',
+
+          attributes: [
+        'name',
+        'description'
+      ],
+        }
+      ]
+      
+    },
+
+    {
+      model: Sale,
+      as: "sale",
+
+      attributes: [
+        'id',
+        'status'
+      ],
+
+
+      include: [
+        {
+          model: Factory,
+          as: 'factory',
+
+          attributes: [
+            'id'
+          ],
+
+          include: [
+        {
+          model: User,
+          as: 'user',
+
+          attributes:[
+            'name'
+          ]
+        }
+      ]
+        }
+      ]
+    }
+    
+  ],
+
+  attributes: [
+        'quantity',
+        'price'
+      ],
+
+
+  order: [["created_at", "DESC"]],
+});
+
+
+
 };

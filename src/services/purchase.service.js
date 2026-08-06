@@ -436,20 +436,20 @@ exports.completePurchase = async (purchaseId) => {
       throw new AppError("Offer not found", 404);
     }
 
-    let inventory = await Inventory.findOne({
-      where: {
-        category_id: offer.category_id,
-      },
-      transaction,
-    });
+    // let inventory = await Inventory.findOne({
+    //   where: {
+    //     category_id: offer.category_id,
+    //   },
+    //   transaction,
+    // });
 
-    if (inventory) {
-      inventory.total_quantity += purchase.quantity;
-      inventory.remaining_quantity += purchase.quantity;
+    // if (inventory) {
+    //   inventory.total_quantity += purchase.quantity;
+    //   inventory.remaining_quantity += purchase.quantity;
 
-      await inventory.save({ transaction });
-    } else {
-      inventory = await Inventory.create(
+    //   await inventory.save({ transaction });
+    // } else {
+      let inventory = await Inventory.create(
         {
           purchase_id: purchase.id,
           category_id: offer.category_id,
@@ -460,7 +460,7 @@ exports.completePurchase = async (purchaseId) => {
         },
         { transaction }
       );
-    }
+    // }
 
     purchase.status = "completed";
     await purchase.save({ transaction });

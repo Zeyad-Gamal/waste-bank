@@ -41,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         allowNull: true,
       },
+
+      
+      price: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
     },
     {
       tableName: 'sale_items',

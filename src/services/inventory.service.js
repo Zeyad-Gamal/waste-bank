@@ -23,39 +23,41 @@ const AppError = require( '../utils/app-error');
 
 exports.getInventory = async () => {
   const inventory = await Inventory.findAll({
-
     include: [
-        {
-          model: Unit,
-          as: 'unit'
-        },
-
-        {
-      model: Category,
-      as: "category",
-      attributes: ["id", "name"],
-    }
+      {
+        model: Unit,
+        as: "unit",
+      },
+      {
+        model: Category,
+        as: "category",
+        attributes: ["id", "name"],
+      },
     ],
-
-    order: [['created_at', 'DESC']],
+    order: [["created_at", "DESC"]],
   });
 
-
-  return inventory.map(item => ({
+  const data = inventory.map((item) => ({
     id: item.id,
     purchase_id: item.purchase_id,
     category: item.category.name,
-
     total_quantity: item.total_quantity,
     remaining_quantity: item.remaining_quantity,
-
     quantity_unit: item.unit.name,
     status: item.status,
-    
-
     created_at: item.created_at,
     updated_at: item.updated_at,
   }));
+
+  // عدد الـ Categories المختلفة
+  const total_types = new Set(
+    inventory.map((item) => item.category.id)
+  ).size;
+
+  return {
+    total_types,
+    data,
+  };
 };
 
 exports.getInventoryItem = async (inventoryId) => {

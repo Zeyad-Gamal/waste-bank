@@ -53,6 +53,18 @@ router.get(
   controller.getFactorySales
 );
 
+
+router.get(
+  '/items',
+
+//   authMiddleware,
+
+//   authorizeRoles('factory'),
+
+  controller.getSaleItems
+);
+
+
 router.patch(
   '/:id/status',
 

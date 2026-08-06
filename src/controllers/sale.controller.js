@@ -70,3 +70,21 @@ exports.updateSale = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+exports.getSaleItems = asyncHandler(async (req, res) => {
+
+
+  
+
+  const result = await service.getSaleItems();
+
+  res.json({
+    success: true,
+    data: result.rows
+  });
+});
