@@ -11,7 +11,7 @@ const purchaseRoutes = require('./routes/purchase.routes');
 const inventoryRoutes = require('./routes/inventory.routes');
 const saleRoutes = require('./routes/sale.routes');
 const shipmentRoutes = require('./routes/shipment.routes');
-
+const processRatingRoutes = require('./routes/process_rating.routes');
 
 const adminFarmerRoutes = require('./routes/admin/farmer.routes');
 const adminFactoryRoutes = require('./routes/admin/factory.routes');
@@ -23,6 +23,8 @@ const adminInventoryRoutes = require('./routes/admin/inventory.routes');
 const adminUnitRoutes = require('./routes/admin/unit.routes');
 const adminCategoryRoutes = require('./routes/admin/category.routes');
 const adminSalesRoutes = require('./routes/admin/sale.routes');
+const adminShipmentsRoutes = require('./routes/admin/shipment.routes');
+const adminProcessRatingRoutes = require('./routes/admin/process_rating.routes');
 
 const errorMiddleware = require('./middlewares/error.middleware');
 
@@ -47,6 +49,7 @@ app.use('/api/purchases', purchaseRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/shipments',shipmentRoutes);
+app.use('/api/process-rating',processRatingRoutes);
 app.use(
   '/uploads',
   express.static(path.join(__dirname, '../uploads'))
@@ -63,6 +66,8 @@ app.use('/api/admin/inventory',adminInventoryRoutes);
 app.use('/api/admin/units',adminUnitRoutes);
 app.use('/api/admin/categories',adminCategoryRoutes);
 app.use('/api/admin/sales',adminSalesRoutes);
+app.use('/api/admin/shipments',adminShipmentsRoutes);
+app.use('/api/admin/process-rating',adminProcessRatingRoutes);
 
 
 // Test route

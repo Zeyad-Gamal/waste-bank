@@ -1,7 +1,9 @@
+const { Op, Sequelize } = require('sequelize');
+
 const {
   Shipment
 } = require('../models');
-const AppError = require( '../utils/app-error');
+const AppError = require('../utils/app-error');
 
 exports.createShipment = async (data) => {
   return await Shipment.create({
@@ -17,14 +19,52 @@ exports.createShipment = async (data) => {
   });
 };
 
-exports.getShipments = async () => {
+exports.getShipments = async (
+  page,
+  limit,
+  search,
+  type,
+  status
+) => {
+
+  console.log("page: " + page)
+  console.log("limit: " + limit)
+  console.log("search: " + search)
+  console.log("type: " + type)
+  console.log("status: " + status)
+
+  const offset = (page - 1) * limit;
+
+  const where = {};
+
+
+  if (search) {
+    where[Op.or] = [
+      { driver_name: { [Op.like]: `%${search}%`, }, },
+      { driver_phone: { [Op.like]: `%${search}%`, }, },
+      { vehicle_type: { [Op.like]: `%${search}%`, }, },
+      { plate_number: { [Op.like]: `%${search}%`, }, }
+    ];
+  }
+
+  if (status) {
+    where['status'] = status;
+  }
+
+  if (type) {
+    where['type'] = type;
+  }
+
   return await Shipment.findAll({
+
+    where,
     order: [
       [
         'created_at',
         'DESC'
       ]
-    ]
+    ],
+    offset
   });
 };
 
@@ -59,4 +99,3 @@ exports.getShipmentById = async (shipmentId) => {
   return shipment;
 
 };
- 

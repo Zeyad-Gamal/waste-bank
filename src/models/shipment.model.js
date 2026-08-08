@@ -46,9 +46,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
 
+      // status: {
+      //   type: DataTypes.STRING,
+      //   allowNull: true,
+      // },
+
       status: {
-        type: DataTypes.STRING,
-        allowNull: true,
+        type: DataTypes.ENUM(
+          'pending',
+          'in_transit',
+          'completed'
+        ),
+        defaultValue: 'pending',
       },
 
       scheduled_date: {

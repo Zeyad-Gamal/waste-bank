@@ -14,7 +14,26 @@ exports.createShipment = asyncHandler( async (req, res) => {
 });
 
 exports.getShipments = asyncHandler(async (req, res) => {
-  const result = await service.getShipments();
+
+  const page = parseInt(req.query.page) || 1;
+
+  const limit = parseInt(req.query.limit) || 10;
+  
+  const search = req.query.search || '';
+
+
+    const status = req.query.status || '';
+    
+    const type = req.query.type || '';
+
+
+  const result = await service.getShipments(
+    page,
+    limit,
+    search,
+    type,
+    status
+  );
 
   res.json({
     success: true,
