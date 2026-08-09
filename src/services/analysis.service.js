@@ -16,6 +16,7 @@ const {
   ProcessRating,
   Factory,
   Category,
+  User,
 } = require('../models');
 
 const AppError = require('../utils/app-error');
@@ -1019,89 +1020,98 @@ const getAveragePrices = async (
 // TOP FACTORIES
 // ======================================================
 
-const getTopFactories = async (
-  start,
-  end
-) => {
+const getTopFactories = async (startDate, endDate) => {
 
-  const result =
-    await Sale.findAll({
+  const rows = await SaleItem.findAll({
 
-      attributes: [
-
-        'factory_id',
-
-        [
-          fn(
-            'COUNT',
-            col('Sale.id')
-          ),
-          'total_sales',
-        ],
-
+    attributes: [
+      [
+        fn(
+          'SUM',
+          col('SaleItem.quantity')
+        ),
+        'total_purchases',
       ],
 
-      where: {
+      [
+        col('sale.factory_id'),
+        'factory_id',
+      ],
 
-        created_at: {
-          [Op.gte]: start,
-          [Op.lt]: end,
+      [
+        col('sale->factory->user.name'),
+        'factory_name',
+      ],
+    ],
+
+    include: [
+      {
+        model: Sale,
+        as: 'sale',
+
+        attributes: [],
+
+        required: true,
+
+        where: {
+          created_at: {
+            [Op.gte]: startDate,
+            [Op.lt]: endDate,
+          },
         },
 
+        include: [
+          {
+            model: Factory,
+            as: 'factory',
+
+            attributes: [],
+
+            required: true,
+
+            include: [
+              {
+                model: User,
+                as: 'user',
+
+                attributes: [],
+
+                required: true,
+              },
+            ],
+          },
+        ],
       },
+    ],
 
-      include: [
+    group: [
+      col('sale.factory_id'),
+      col('sale->factory->user.name'),
+    ],
 
-        {
-
-          model: Factory,
-
-          as: 'factory',
-
-          attributes: [
-
-            'factory_owner_name',
-
-          ],
-
-        },
-
+    order: [
+      [
+        literal('total_purchases'),
+        'DESC',
       ],
+    ],
 
-      group: [
+    limit: 5,
 
-        'factory_id',
+    raw: true,
 
-        'factory.id',
-
-        'factory.factory_owner_name',
-
-      ],
-
-      order: [
-
-        [
-          literal('total_sales'),
-          'DESC',
-        ],
-
-      ],
-
-      limit: 5,
-
-    });
+  });
 
 
-  return result.map(item => ({
-
+  return rows.map(row => ({
     name:
-      item.factory.factory_owner_name,
+      row.factory_name ||
+      'Unknown Factory',
 
-    total_sales:
+    total_quantity:
       Number(
-        item.get('total_sales')
+        row.total_purchases || 0
       ),
-
   }));
 
 };

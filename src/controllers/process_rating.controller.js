@@ -104,16 +104,19 @@ exports.getRatings = async (req, res, next) => {
     const {
       page = 1,
       limit = 10,
+      search,
       rating,
       purchase_id,
       sale_id,
     } = req.query;
+    
 
     const result =
       await ratingService.getRatings({
 
         page,
         limit,
+        search,
         rating,
         purchase_id,
         sale_id,

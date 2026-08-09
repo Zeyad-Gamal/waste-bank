@@ -1,4 +1,5 @@
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
+
 const {
   ProcessRating: Rating,
   User,
@@ -137,6 +138,7 @@ exports.getRatingById = async (ratingId) => {
 exports.getRatings = async ({
   page = 1,
   limit = 10,
+  search,
   rating,
   purchase_id,
   sale_id,
@@ -157,6 +159,24 @@ exports.getRatings = async ({
   if (sale_id) {
     where.sale_id = sale_id;
   }
+
+
+
+  if (search) {
+      where[Op.or] = [
+        {
+          sale_id: {
+            [Op.like]: `%${search}%`,
+          },
+        },
+        Sequelize.where(
+          Sequelize.col('user.name'),
+          {
+            [Op.like]: `%${search}%`,
+          }
+        ),
+      ];
+    }
 
   const result = await Rating.findAndCountAll({
 

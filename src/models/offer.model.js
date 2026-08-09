@@ -98,6 +98,7 @@ module.exports = (sequelize, DataTypes) => {
           'under_review',
           'partially_purchased',
           'fully_purchased',
+          'approved',
           'rejected'
         ),
         defaultValue: 'pending',
