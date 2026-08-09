@@ -26,7 +26,19 @@ router.get(
 );
 
 
+router.get(
+  '/average',
 
+  ratingController.getAverageRating
+);
+
+
+router.delete(
+  '/:id',
+
+
+  ratingController.deleteRate
+);
 
 
 

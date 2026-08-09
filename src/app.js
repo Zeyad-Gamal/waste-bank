@@ -25,6 +25,7 @@ const adminCategoryRoutes = require('./routes/admin/category.routes');
 const adminSalesRoutes = require('./routes/admin/sale.routes');
 const adminShipmentsRoutes = require('./routes/admin/shipment.routes');
 const adminProcessRatingRoutes = require('./routes/admin/process_rating.routes');
+const adminAnalysisRoutes = require('./routes/admin/analysis.routes');
 
 const errorMiddleware = require('./middlewares/error.middleware');
 
@@ -68,6 +69,7 @@ app.use('/api/admin/categories',adminCategoryRoutes);
 app.use('/api/admin/sales',adminSalesRoutes);
 app.use('/api/admin/shipments',adminShipmentsRoutes);
 app.use('/api/admin/process-rating',adminProcessRatingRoutes);
+app.use('/api/admin/analysis',adminAnalysisRoutes);
 
 
 // Test route

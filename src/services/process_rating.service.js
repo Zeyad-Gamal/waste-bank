@@ -284,3 +284,26 @@ exports.getRatingStatistics = async () => {
   return ratings;
 
 };
+
+
+
+
+
+
+
+
+
+exports.deleteRate = async (
+  Id,
+) => {
+
+   const rating = await Rating.findByPk(Id);
+
+  if (!rating) {
+    throw new AppError('Offer not found', 404);
+  }
+
+
+  await rating.destroy();
+
+};

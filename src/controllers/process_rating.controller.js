@@ -195,3 +195,22 @@ exports.getRatingStatistics = async (
   }
 
 };
+
+
+
+
+
+
+exports.deleteRate = async (req, res) => {
+
+
+    await ratingService.deleteRate(
+      req.params.id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Rate deleted successfully',
+    });
+
+};
