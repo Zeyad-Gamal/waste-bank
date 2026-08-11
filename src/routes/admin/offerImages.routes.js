@@ -6,6 +6,7 @@ const offerImagesController = require('../../controllers/offerImages.controller'
 
 const authMiddleware = require('../../middlewares/auth.middleware');
 
+const authorizeRoles = require('../../middlewares/role.middleware');
 
 
 
@@ -13,12 +14,20 @@ const authMiddleware = require('../../middlewares/auth.middleware');
 router.get(
   '/',
 
+      authMiddleware,
+  
+    authorizeRoles('admin'),
+
   offerImagesController.getAllOfferImages
 );
 
 
 router.delete(
   '/:id',
+
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   offerImagesController.deleteOfferImage
 );

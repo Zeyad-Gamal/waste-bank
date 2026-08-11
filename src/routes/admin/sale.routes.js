@@ -22,13 +22,9 @@ require('../../validations/sale.validation');
 router.post(
   '/',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
-
-//   validate(
-//     createSaleSchema
-//   ),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.createSale
 );
@@ -36,9 +32,9 @@ router.post(
 router.get(
   '/',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.getSales
 );
@@ -46,9 +42,9 @@ router.get(
 router.get(
   '/my-sales',
 
-//   authMiddleware,
-
-//   authorizeRoles('factory'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.getFactorySales
 );
@@ -57,9 +53,9 @@ router.get(
 router.get(
   '/items',
 
-//   authMiddleware,
-
-//   authorizeRoles('factory'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.getSaleItems
 );
@@ -68,9 +64,9 @@ router.get(
 router.patch(
   '/:id/status',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.updateStatus
 );
@@ -80,9 +76,9 @@ router.patch(
 router.put(
   '/:id',
 
-//   authMiddleware,
-
-//   authorizeRoles('factory'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.updateSale
 );

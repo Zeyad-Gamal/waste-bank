@@ -6,6 +6,8 @@ const unitController = require('../../controllers/unit.controller');
 
 const authMiddleware = require('../../middlewares/auth.middleware');
 
+const authorizeRoles = require('../../middlewares/role.middleware');
+
 const validate = require('../../middlewares/validation.middleware');
 
 
@@ -14,7 +16,9 @@ const validate = require('../../middlewares/validation.middleware');
 router.post(
   '/',
 
-
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   unitController.createUnit
 );
@@ -26,6 +30,9 @@ router.post(
 router.put(
   '/:id',
 
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   unitController.updateUnit
 );
@@ -36,6 +43,9 @@ router.put(
 router.get(
   '/',
 
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   unitController.getAllOffers
 );

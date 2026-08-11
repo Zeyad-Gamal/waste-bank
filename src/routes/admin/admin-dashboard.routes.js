@@ -17,8 +17,8 @@ const controller =
 
 router.get(
   '/',
-//   auth,
-//   authorizeRoles('admin'),
+  auth,
+  authorizeRoles('admin'),
   controller.getDashboard
 );
 

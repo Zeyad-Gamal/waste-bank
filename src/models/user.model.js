@@ -35,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('active', 'inactive'),
         allowNull: false,
       },
+
+      email_verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       tableName: 'users',
@@ -63,6 +69,12 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Offer, {
   foreignKey: 'farmer_id',
   as: 'offers',
+});
+
+
+User.hasMany(models.EmailVerificationToken, {
+  foreignKey: 'user_id',
+  as: 'emailVerificationTokens',
 });
 
   };

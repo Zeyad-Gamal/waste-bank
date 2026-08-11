@@ -2,9 +2,11 @@ const bcrypt = require('bcryptjs');
 
 const { User, Farmer, Factory, sequelize } = require('../models');
 
+const emailVerificationService = require('./email-verification.service');
+
 const { generateToken } = require('../utils/jwt');
 
-const AppError = require( '../utils/app-error');
+const AppError = require('../utils/app-error');
 
 exports.registerFarmer = async (data) => {
 
@@ -30,6 +32,8 @@ exports.registerFarmer = async (data) => {
         phone: data.phone,
         password: hashedPassword,
         role: 'farmer',
+        is_active: 'active',
+        email_verified: true
       },
       { transaction }
     );
@@ -74,6 +78,7 @@ exports.registerFarmer = async (data) => {
         name: user.name,
         phone: user.phone,
         role: user.role,
+        email_verified: user.email_verified,
       },
 
       farmer,
@@ -86,8 +91,11 @@ exports.registerFarmer = async (data) => {
     throw error;
   }
 
-};
+ };
 
+
+
+ 
 exports.registerFactory = async (data) => {
 
   const transaction = await sequelize.transaction();
@@ -136,6 +144,8 @@ exports.registerFactory = async (data) => {
         phone: data.phone,
         password: hashedPassword,
         role: 'factory',
+        is_active: 'inactive',
+        email_verified: false
       },
       { transaction }
     );
@@ -165,23 +175,28 @@ exports.registerFactory = async (data) => {
 
     await transaction.commit();
 
-    const token = generateToken({
-      id: user.id,
-      role: user.role,
-    });
+
+
+    // const token = generateToken({
+    //   id: user.id,
+    //   role: user.role,
+    // });
+
+    await emailVerificationService.sendVerificationEmail(user.id);
+
+
 
     return {
-      token,
+  user: {
+    id: user.id,
+    name: user.name,
+    phone: user.phone,
+    role: user.role,
+    email_verified: user.email_verified,
+  },
 
-      user: {
-        id: user.id,
-        name: user.name,
-        phone: user.phone,
-        role: user.role,
-      },
-
-      factory,
-    };
+  factory,
+};
 
   } catch (error) {
 
@@ -191,6 +206,9 @@ exports.registerFactory = async (data) => {
   }
 
 };
+
+
+
 exports.login = async (data) => {
 
   const user = await User.findOne({
@@ -231,3 +249,59 @@ exports.login = async (data) => {
   };
 
 };
+
+
+
+
+exports.adminLogin = async (data) => {
+
+  const user = await User.findOne({
+    where: {
+      name: data.name,
+    },
+  });
+
+  if (!user) {
+    throw new AppError('Invalid name or password', 400);
+  }
+  
+
+  const isPasswordValid = await bcrypt.compare(
+    data.password,
+    user.password
+  );
+
+  if (!isPasswordValid) {
+    throw new AppError('Invalid phone or password', 400);
+  }
+
+  const token = generateToken({
+    id: user.id,
+    role: user.role,
+  });
+
+  return {
+
+    token,
+
+    user: {
+      id: user.id,
+      name: user.name,
+      role: user.role,
+    },
+
+  };
+
+};
+
+
+
+
+exports.me = async (id) => {
+
+  const user = await User.findByPk(id);
+
+  return user;
+
+};
+

@@ -6,6 +6,8 @@ const offerController = require('../../controllers/offer.controller');
 
 const authMiddleware = require('../../middlewares/auth.middleware');
 
+const authorizeRoles = require('../../middlewares/role.middleware');
+
 const validate = require('../../middlewares/validation.middleware');
 
 const upload = require('../../utils/multer');
@@ -24,9 +26,9 @@ const {
 router.post(
   '/',
 
-  // authMiddleware,
-
-  // authorizeRoles('farmer'),
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   upload.array('offer_images', 10),
 
@@ -38,6 +40,10 @@ router.post(
 router.get(
   '/',
 
+  authMiddleware,
+  
+  authorizeRoles('admin'),
+
   offerController.getAllOffers
 );
 
@@ -48,9 +54,9 @@ router.get(
 router.patch(
   '/:id/approve',
 
-  // authMiddleware,
-
-  // authorizeRoles('admin'),
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   offerController.approveOffer
 );
@@ -60,9 +66,9 @@ router.patch(
 router.patch(
   '/:id/reject',
 
-  // authMiddleware,
-
-  // authorizeRoles('admin'),
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   offerController.rejectOffer
 );
@@ -72,9 +78,9 @@ router.patch(
 router.delete(
   '/:id',
 
-  // authMiddleware,
-
-  // authorizeRoles('farmer'),
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   offerController.deleteOffer
 );

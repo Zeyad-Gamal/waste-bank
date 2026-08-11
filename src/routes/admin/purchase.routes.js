@@ -28,7 +28,9 @@ const {
 router.get(
     '/',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     purchaseController.getAllPurchases
 );
@@ -38,6 +40,10 @@ router.get(
 router.post(
   '/',
 
+      authMiddleware,
+  
+    authorizeRoles('admin'),
+
   purchaseController.createPurchase
 );
 
@@ -46,7 +52,9 @@ router.post(
 router.patch(
   '/:id/approve',
 
-
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   purchaseController.approvePurchase
 );
@@ -55,7 +63,9 @@ router.patch(
 router.patch(
   '/:id/reject',
 
-
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   purchaseController.rejectPurchase
 );
@@ -65,7 +75,9 @@ router.patch(
 router.patch(
   '/:id/complete',
 
-
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   purchaseController.completePurchase
 );

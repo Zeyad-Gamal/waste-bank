@@ -22,13 +22,9 @@ require('../../validations/shipment.validation');
 router.post(
   '/',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
-
-//   validate(
-//     createSaleSchema
-//   ),
+     authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.createShipment
 );
@@ -36,9 +32,9 @@ router.post(
 router.get(
   '/',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.getShipments
 );
@@ -46,9 +42,9 @@ router.get(
 router.get(
   '/:id',
 
-//   authMiddleware,
-
-//   authorizeRoles('factory'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.getShipmentById
 );
@@ -59,9 +55,9 @@ router.get(
 router.patch(
   '/:id/status',
 
-//   authMiddleware,
-
-//   authorizeRoles('admin'),
+      authMiddleware,
+  
+    authorizeRoles('admin'),
 
   controller.updateShipmentStatus
 );

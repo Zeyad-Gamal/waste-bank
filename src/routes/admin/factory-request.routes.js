@@ -19,7 +19,9 @@ const upload = require('../../utils/multer');
 router.get(
     '/',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     factoryRequestController.getAllRequests
 );
@@ -29,7 +31,9 @@ router.get(
 router.patch(
     '/:id/status',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     factoryRequestController.updateRequestStatus
 );
@@ -39,7 +43,9 @@ router.patch(
 router.patch(
     '/:id/cancel',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     factoryRequestController.adminCancelFactoryRequest
 );

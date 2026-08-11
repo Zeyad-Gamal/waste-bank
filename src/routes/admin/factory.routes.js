@@ -19,7 +19,9 @@ const upload = require('../../utils/multer');
 router.get(
     '/',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     factoryController.getAllFactories
 );
@@ -28,6 +30,10 @@ router.get(
 
 router.post(
   '/',
+
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   upload.fields([
     { name: 'factory_image', maxCount: 1 },
@@ -41,6 +47,10 @@ router.post(
 router.patch(
   '/:id/status',
 
+  authMiddleware,
+  
+  authorizeRoles('admin'),
+
   factoryController.updateFactoryStatus
 );
 
@@ -50,6 +60,10 @@ router.patch(
 
 router.delete(
   '/:id',
+
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   factoryController.deleteFactory
 );

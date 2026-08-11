@@ -28,7 +28,9 @@ const {
 router.get(
     '/',
     
-    // authMiddleware,
+    authMiddleware,
+  
+    authorizeRoles('admin'),
     
     inventoryController.getInventory
 );

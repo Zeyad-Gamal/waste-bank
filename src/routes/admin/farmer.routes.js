@@ -28,7 +28,9 @@ const {
 router.get(
     '/',
     
-    // authMiddleware,
+    authMiddleware,
+
+    authorizeRoles('admin'),
     
     farmerController.getAllFarmers
 );
@@ -37,6 +39,10 @@ router.get(
 
 router.post(
   '/',
+
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   upload.fields([
     { name: 'national_id_image', maxCount: 1 },
@@ -50,7 +56,9 @@ router.post(
 router.patch(
   '/:id/status',
 
-
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   farmerController.updateFarmerStatus
 );
@@ -59,6 +67,10 @@ router.patch(
 
 router.delete(
   '/:id',
+
+  authMiddleware,
+  
+  authorizeRoles('admin'),
 
   farmerController.deleteFarmer
 );
