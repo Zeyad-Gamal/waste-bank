@@ -31,6 +31,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
 
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+
       is_active: {
         type: DataTypes.ENUM('active', 'inactive'),
         allowNull: false,

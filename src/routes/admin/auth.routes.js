@@ -29,9 +29,6 @@ router.get(
 
 
 
-router.get(
-  '/verify-email',
-  authController.verifyEmail
-);
+
 
 module.exports = router;

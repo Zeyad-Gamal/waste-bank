@@ -10,6 +10,9 @@ const AppError = require('../utils/app-error');
 
 const TOKEN_EXPIRATION_HOURS = 24;
 
+const RESEND_COOLDOWN_SECONDS = 60;
+
+
 const generateVerificationToken = () => {
   return crypto.randomBytes(32).toString('hex');
 };
@@ -51,6 +54,7 @@ exports.sendVerificationEmail = async (userId) => {
   const expiresAt = new Date(
     Date.now() + TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000
   );
+  
 
   await EmailVerificationToken.create({
     user_id: userId,
@@ -100,6 +104,7 @@ exports.sendVerificationEmail = async (userId) => {
 
 
 exports.verifyEmail = async (rawToken) => {
+
   if (!rawToken) {
     throw new AppError(
       'Verification token is required',
@@ -109,57 +114,78 @@ exports.verifyEmail = async (rawToken) => {
 
   const hashedToken = hashToken(rawToken);
 
-  const verificationToken =
-    await EmailVerificationToken.findOne({
-      where: {
-        token: hashedToken,
-        used_at: null,
-      },
-    });
-
-  if (!verificationToken) {
-    throw new AppError(
-      'Invalid or already used verification token',
-      400
-    );
-  }
-
-  if (new Date() > verificationToken.expires_at) {
-    await verificationToken.update({
-      used_at: new Date(),
-    });
-
-    throw new AppError(
-      'Verification token has expired',
-      400
-    );
-  }
-
-  const user = await User.findByPk(
-    verificationToken.user_id
-  );
-
-  if (!user) {
-    throw new AppError(
-      'User not found',
-      404
-    );
-  }
-
-  if (user.email_verified) {
-    await verificationToken.update({
-      used_at: new Date(),
-    });
-
-    return {
-      message: 'Email is already verified',
-    };
-  }
-
   const transaction =
     await User.sequelize.transaction();
 
   try {
+
+    const verificationToken =
+      await EmailVerificationToken.findOne({
+        where: {
+          token: hashedToken,
+          used_at: null,
+        },
+
+        transaction,
+
+        lock: transaction.LOCK.UPDATE,
+      });
+
+    if (!verificationToken) {
+      throw new AppError(
+        'Invalid or already used verification token',
+        400
+      );
+    }
+
+    if (
+      new Date() >
+      verificationToken.expires_at
+    ) {
+
+      await verificationToken.update(
+        {
+          used_at: new Date(),
+        },
+        { transaction }
+      );
+
+      throw new AppError(
+        'Verification token has expired',
+        400
+      );
+    }
+
+    const user = await User.findByPk(
+      verificationToken.user_id,
+      {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      }
+    );
+
+    if (!user) {
+      throw new AppError(
+        'User not found',
+        404
+      );
+    }
+
+    if (user.email_verified) {
+
+      await verificationToken.update(
+        {
+          used_at: new Date(),
+        },
+        { transaction }
+      );
+
+      await transaction.commit();
+
+      return {
+        message: 'Email is already verified',
+      };
+    }
 
     await user.update(
       {
@@ -177,14 +203,82 @@ exports.verifyEmail = async (rawToken) => {
 
     await transaction.commit();
 
+    return {
+      message: 'Email verified successfully',
+    };
+
   } catch (error) {
 
-    await transaction.rollback();
-    throw error;
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
 
+    throw error;
+  }
+};
+
+
+
+exports.resendVerificationEmail = async (email) => {
+
+  if (!email) {
+    throw new AppError('Email is required', 400);
   }
 
+  const user = await User.findOne({
+    where: { email },
+  });
+
+  // Don't reveal whether the email exists
+  if (!user) {
+    return {
+      message:
+        'If the email exists, a verification email has been sent.',
+    };
+  }
+
+  if (user.email_verified) {
+    throw new AppError(
+      'Email is already verified',
+      400
+    );
+  }
+
+  const lastToken = await EmailVerificationToken.findOne({
+    where: {
+      user_id: user.id,
+    },
+    order: [
+      ['created_at', 'DESC'],
+    ],
+  });
+
+  if (lastToken) {
+
+    const elapsed =
+      Date.now() -
+      new Date(lastToken.created_at).getTime();
+
+    const cooldown =
+      RESEND_COOLDOWN_SECONDS * 1000;
+
+    if (elapsed < cooldown) {
+
+      const remainingSeconds = Math.ceil(
+        (cooldown - elapsed) / 1000
+      );
+
+      throw new AppError(
+        `Please wait ${remainingSeconds} seconds before requesting another verification email`,
+        429
+      );
+    }
+  }
+
+  await this.sendVerificationEmail(user.id);
+
   return {
-    message: 'Email verified successfully',
+    message:
+      'If the email exists, a verification email has been sent.',
   };
 };

@@ -33,6 +33,7 @@ exports.registerFarmer = async (data) => {
         password: hashedPassword,
         role: 'farmer',
         is_active: 'active',
+        email: null,
         email_verified: true
       },
       { transaction }
@@ -97,37 +98,45 @@ exports.registerFarmer = async (data) => {
 
  
 exports.registerFactory = async (data) => {
-
   const transaction = await sequelize.transaction();
 
   try {
-
     const existingUser = await User.findOne({
       where: {
         phone: data.phone,
       },
+      transaction,
     });
 
     if (existingUser) {
-      throw new AppError('Phone already exists', 400);
+      throw new AppError(
+        'Phone already exists',
+        400
+      );
     }
 
     const existingFactory = await Factory.findOne({
       where: {
         email: data.email,
       },
+      transaction,
     });
 
     if (existingFactory) {
-      throw new AppError('Factory email already exists', 400);
+      throw new AppError(
+        'Factory email already exists',
+        400
+      );
     }
 
-    const existingRegistrationNumber = await Factory.findOne({
-      where: {
-        industrial_registration_number:
-          data.industrial_registration_number,
-      },
-    });
+    const existingRegistrationNumber =
+      await Factory.findOne({
+        where: {
+          industrial_registration_number:
+            data.industrial_registration_number,
+        },
+        transaction,
+      });
 
     if (existingRegistrationNumber) {
       throw new AppError(
@@ -136,7 +145,8 @@ exports.registerFactory = async (data) => {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword =
+      await bcrypt.hash(data.password, 10);
 
     const user = await User.create(
       {
@@ -145,7 +155,8 @@ exports.registerFactory = async (data) => {
         password: hashedPassword,
         role: 'factory',
         is_active: 'inactive',
-        email_verified: false
+        email: data.email,
+        email_verified: false,
       },
       { transaction }
     );
@@ -153,58 +164,74 @@ exports.registerFactory = async (data) => {
     const factory = await Factory.create(
       {
         user_id: user.id,
-
         email: data.email,
+        factory_owner_name:
+          data.factory_owner_name,
 
-        factory_owner_name: data.factory_owner_name,
+        address_governrate:
+          data.address_governrate,
 
-        address_governrate: data.address_governrate,
-        address_city: data.address_city,
-        address_village: data.address_village,
-        address_street: data.address_street,
+        address_city:
+          data.address_city,
+
+        address_village:
+          data.address_village,
+
+        address_street:
+          data.address_street,
 
         industrial_registration_number:
           data.industrial_registration_number,
 
-        industry_type: data.industry_type,
+        industry_type:
+          data.industry_type,
 
-        factory_image: data.factory_image,
+        factory_image:
+          data.factory_image,
       },
       { transaction }
     );
 
+    // Commit database changes
     await transaction.commit();
 
+    // Send verification email AFTER successful commit
+    try {
+      await emailVerificationService
+        .sendVerificationEmail(user.id);
+    } catch (emailError) {
 
+      console.error(
+        'Verification email failed:',
+        emailError
+      );
 
-    // const token = generateToken({
-    //   id: user.id,
-    //   role: user.role,
-    // });
-
-    await emailVerificationService.sendVerificationEmail(user.id);
-
-
+      // Don't rollback.
+      // User has already been created successfully.
+    }
 
     return {
-  user: {
-    id: user.id,
-    name: user.name,
-    phone: user.phone,
-    role: user.role,
-    email_verified: user.email_verified,
-  },
+      user: {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        role: user.role,
+        email_verified:
+          user.email_verified,
+      },
 
-  factory,
-};
+      factory,
+    };
 
   } catch (error) {
 
-    await transaction.rollback();
+    // Rollback only if transaction is still active
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
 
     throw error;
   }
-
 };
 
 
@@ -230,23 +257,38 @@ exports.login = async (data) => {
     throw new AppError('Invalid phone or password', 400);
   }
 
+  if (!user.email_verified) {
+  throw new AppError(
+    'Please verify your email before logging in',
+    403
+  );
+}
+
+
+if (user.is_active !== 'active') {
+  throw new AppError(
+    'Your account is not active',
+    403
+  );
+}
+
   const token = generateToken({
     id: user.id,
     role: user.role,
   });
 
   return {
+  token,
 
-    token,
-
-    user: {
-      id: user.id,
-      name: user.name,
-      phone: user.phone,
-      role: user.role,
-    },
-
-  };
+  user: {
+    id: user.id,
+    name: user.name,
+    phone: user.phone,
+    role: user.role,
+    email_verified: user.email_verified,
+    is_active: user.is_active,
+  },
+};
 
 };
 
