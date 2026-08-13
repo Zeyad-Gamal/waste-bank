@@ -1,6 +1,10 @@
 const { Op, Sequelize } = require('sequelize');
 const { Offer, OfferImage, User, Farmer, Unit, Category, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
+const notificationService = require('./notification.service');
+
+const NOTIFICATION_TYPES = require('../constants/notification-types');
+
 
 exports.createOffer = async (data) => {
 
@@ -11,6 +15,7 @@ exports.createOffer = async (data) => {
     // const category_id =  
 
     const category_data = await Category.findByPk(data.category_id);
+    
 
 
     const offer = await Offer.create({
@@ -59,6 +64,36 @@ exports.createOffer = async (data) => {
     }
 
     await transaction.commit();
+
+
+    const farmer = await Farmer.findOne({
+  where: {
+    user_id: data.farmer_id,
+  },
+  include: [
+    {
+      model: User,
+      as: 'user',
+      attributes: ['name'],
+    },
+  ],
+});
+
+
+    await notificationService.notifyAdmins({
+      type: NOTIFICATION_TYPES.NEW_OFFER,
+
+      title: 'New Offer Submitted',
+
+      message: `A new offer has been submitted.`,
+
+      data: {
+        offer_id: offer.id,
+        farmer_id: data.farmer_id,
+        category_id: data.category_id,
+        quantity: data.quantity,
+      },
+    });
 
     return offer;
 

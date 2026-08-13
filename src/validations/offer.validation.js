@@ -21,6 +21,14 @@ exports.createOfferSchema = Joi.object({
   price: Joi.number()
     .required(),
 
+    farmer_id: Joi.string()
+    .required(),
+
+    category_id: Joi.string()
+    .required(),
+
+
+
   collection_location: Joi.string()
     .required(),
 

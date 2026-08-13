@@ -26,9 +26,9 @@ const {
 router.post(
   '/',
 
-  // authMiddleware,
+  authMiddleware,
 
-  // authorizeRoles('farmer'),
+  authorizeRoles('farmer'),
 
   upload.array('offer_images', 10),
 

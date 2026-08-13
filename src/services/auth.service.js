@@ -154,7 +154,7 @@ exports.registerFactory = async (data) => {
         phone: data.phone,
         password: hashedPassword,
         role: 'factory',
-        is_active: 'inactive',
+        is_active: 'active',
         email: data.email,
         email_verified: false,
       },

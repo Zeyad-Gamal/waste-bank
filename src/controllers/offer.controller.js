@@ -12,7 +12,7 @@ exports.createOffer = asyncHandler(async (req, res) => {
 
 
     const result = await offerService.createOffer({
-
+      
       ...req.body,
 
       farmer_id: req.user.id,

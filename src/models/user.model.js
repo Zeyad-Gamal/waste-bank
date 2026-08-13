@@ -86,6 +86,13 @@ User.hasMany(models.EmailVerificationToken, {
   as: 'emailVerificationTokens',
 });
 
+
+
+User.hasMany(models.Notification, {
+  foreignKey: 'user_id',
+  as: 'notifications',
+});
+
   };
 
   return User;

@@ -5,6 +5,7 @@ const {
   fn,
   col,
   literal,
+  where,
 } = require('sequelize');
 
 const {
@@ -107,7 +108,13 @@ const getStats = async () => {
 
   ] = await Promise.all([
 
-    User.count(),
+    User.count({
+      where: {
+        role: {
+          [Op.in]: ['farmer', 'factory'],
+        }
+      }
+    }),
 
     Farmer.count(),
 
