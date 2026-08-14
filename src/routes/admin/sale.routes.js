@@ -61,14 +61,43 @@ router.get(
 );
 
 
+
+
+
 router.patch(
-  '/:id/status',
+  '/:id/approve',
 
       authMiddleware,
   
     authorizeRoles('admin'),
 
-  controller.updateStatus
+  controller.approveSale
+);
+
+
+
+
+router.patch(
+  '/:id/reject',
+
+      authMiddleware,
+  
+    authorizeRoles('admin'),
+
+  controller.rejectSale
+);
+
+
+
+
+router.patch(
+  '/:id/complete',
+
+      authMiddleware,
+  
+    authorizeRoles('admin'),
+
+  controller.completeSale
 );
 
 

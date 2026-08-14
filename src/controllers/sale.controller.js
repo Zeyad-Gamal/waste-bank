@@ -88,3 +88,82 @@ exports.getSaleItems = asyncHandler(async (req, res) => {
     data: result.rows
   });
 });
+
+
+
+
+
+
+exports.approveSale = asyncHandler(async (req, res) => {
+
+      const result =
+        await service.approveSale(
+
+          req.params.id,
+
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          'Sale approved successfully',
+        data: result,
+      });
+
+});
+
+
+
+
+
+
+
+
+exports.rejectSale = asyncHandler(async (req, res) => {
+
+      const result =
+        await service.rejectSale(
+
+          req.params.id,
+
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          'Sale rejected successfully',
+        data: result,
+      });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.completeSale = asyncHandler(async (req, res) => {
+
+      const result =
+        await service.completeSale(
+
+          req.params.id,
+
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          'Sale completed successfully',
+        data: result,
+      });
+
+});

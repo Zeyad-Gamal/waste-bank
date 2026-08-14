@@ -203,34 +203,34 @@ exports.getFactorySales = async (factoryId) => {
   });
 };
 
-exports.updateStatus = async (saleId, status) => {
-  const allowed = [
-    'pending',
-    'approved',
-    'completed',
-    'cancelled'
-  ];
+// exports.updateStatus = async (saleId, status) => {
+//   const allowed = [
+//     'pending',
+//     'approved',
+//     'completed',
+//     'cancelled'
+//   ];
 
-  if (!allowed.includes(status)) {
-    throw new AppError('Invalid status', 400);
-  }
+//   if (!allowed.includes(status)) {
+//     throw new AppError('Invalid status', 400);
+//   }
 
-  const sale = await Sale.findByPk(saleId);
+//   const sale = await Sale.findByPk(saleId);
 
-  if (!sale) {
-    throw new AppError('Sale not found', 404);
-  }
+//   if (!sale) {
+//     throw new AppError('Sale not found', 404);
+//   }
 
-  if (sale.status === 'completed') {
-    throw new AppError('Completed sale cannot be modified', 400);
-  }
+//   if (sale.status === 'completed') {
+//     throw new AppError('Completed sale cannot be modified', 400);
+//   }
 
-  sale.status = status;
+//   sale.status = status;
 
-  await sale.save();
+//   await sale.save();
 
-  return sale;
-};
+//   return sale;
+// };
 
 
 exports.updateSale = async (id, data) => {
@@ -441,3 +441,136 @@ exports.getSaleItems = async () => {
 
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.approveSale = async (
+    saleeId
+  ) => {
+
+    const sale =
+      await Sale.findByPk(
+        saleeId
+      );
+
+    if (!sale) {
+
+      throw new AppError(
+        'Sale not found',
+        404
+      );
+
+    }
+
+    sale.status = "approved";
+
+    await sale.save();
+
+    return sale;
+
+};
+
+
+
+exports.rejectSale = async (
+    saleeId
+  ) => {
+
+    const sale =
+      await Sale.findByPk(
+        saleeId
+      );
+
+    if (!sale) {
+
+      throw new AppError(
+        'Sale not found',
+        404
+      );
+
+    }
+
+    sale.status = "rejected";
+
+    await sale.save();
+
+    return sale;
+
+};
+
+
+exports.completeSale = async (
+    saleeId
+  ) => {
+
+    const sale =
+      await Sale.findByPk(
+        saleeId
+      );
+
+    if (!sale) {
+
+      throw new AppError(
+        'Sale not found',
+        404
+      );
+
+    }
+
+    sale.status = "completed";
+
+    await sale.save();
+
+    return sale;
+
+};
+
+

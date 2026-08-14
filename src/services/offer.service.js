@@ -317,6 +317,22 @@ exports.approveOffer = async (offerId) => {
 
   await offer.save();
 
+
+
+  await notificationService.createNotification({
+  userId: offer.farmer_id,
+
+  type: NOTIFICATION_TYPES.OFFER_APPROVED,
+
+  title: 'Offer Approved',
+
+  message: 'Your offer has been approved.',
+
+  data: {
+    offer_id: offer.id,
+  },
+});
+
   return offer;
 
 };
@@ -334,6 +350,20 @@ exports.rejectOffer = async (offerId) => {
   offer.status = 'rejected';
 
   await offer.save();
+
+  await notificationService.createNotification({
+  userId: offer.farmer_id,
+
+  type: NOTIFICATION_TYPES.OFFER_REJECTED,
+
+  title: 'Offer Rejected',
+
+  message: 'Your offer has been rejected.',
+
+  data: {
+    offer_id: offer.id,
+  },
+});
 
   return offer;
 

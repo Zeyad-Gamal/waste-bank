@@ -28,7 +28,6 @@ const adminProcessRatingRoutes = require('./routes/admin/process_rating.routes')
 const adminAnalysisRoutes = require('./routes/admin/analysis.routes');
 const adminDashboardRoutes = require('./routes/admin/admin-dashboard.routes');
 const adminAuthRoutes = require('./routes/admin/auth.routes');
-const adminNotificationRoutes = require('./routes/admin/notification.routes');
 
 
 
@@ -88,7 +87,6 @@ app.use('/api/admin/process-rating',adminProcessRatingRoutes);
 app.use('/api/admin/analysis',adminAnalysisRoutes);
 app.use('/api/admin/dashboard',adminDashboardRoutes);
 app.use('/api/auth/admin',adminAuthRoutes);
-app.use('/api/admin/notifications',adminNotificationRoutes);
 
 
 // Test route

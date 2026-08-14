@@ -15,7 +15,7 @@ const authorizeRoles = require('../middlewares/role.middleware');
 router.get(
   '/',
   authMiddleware,
-  authorizeRoles('farmer','factory'),
+  authorizeRoles('farmer','factory','admin'),
   notificationController.getNotifications
 );
 
@@ -23,7 +23,7 @@ router.get(
 router.get(
   '/unread-count',
   authMiddleware,
-  authorizeRoles('farmer','factory'),
+  authorizeRoles('farmer','factory','admin'),
     notificationController.getUnreadCount
 );
 
@@ -31,7 +31,7 @@ router.get(
 router.patch(
   '/read-all',
 authMiddleware,
-  authorizeRoles('farmer','factory'),
+  authorizeRoles('farmer','factory','admin'),
   notificationController.markAllAsRead
 );
 
@@ -39,7 +39,7 @@ authMiddleware,
 router.patch(
   '/:id/read',
     authMiddleware,
-  authorizeRoles('farmer','factory'),
+  authorizeRoles('farmer','factory','admin'),
   notificationController.markAsRead
 );
 

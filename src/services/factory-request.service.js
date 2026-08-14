@@ -4,6 +4,9 @@ const {
 } = require('../models');
 const AppError = require( '../utils/app-error');
 
+const notificationService = require('./notification.service');
+
+const NOTIFICATION_TYPES = require('../constants/notification-types');
 
 exports.createFactoryRequest = async (data) => {
 
@@ -18,9 +21,39 @@ exports.createFactoryRequest = async (data) => {
 
         max_price: data.max_price,
 
-        status: 'open',
+        status: 'pending',
 
       });
+
+      try {
+
+    await notificationService.notifyAdmins({
+
+      type: NOTIFICATION_TYPES.NEW_REQUEST,
+
+      title: 'New Factory Request',
+
+      message:
+        'A new factory request has been submitted.',
+
+      data: {
+        request_id: request.id,
+        factory_id: request.factory_id,
+        category_id: request.category_id,
+        quantity: request.quantity,
+        max_price: request.max_price,
+      },
+
+    });
+
+  } catch (notificationError) {
+
+    console.error(
+      'Failed to create factory request notification:',
+      notificationError
+    );
+
+  }
 
     return request;
 
@@ -89,10 +122,10 @@ exports.updateFactoryRequest =  async (
       );
     }
 
-    if (request.status !== 'open') {
+    if (request.status !== 'pending') {
 
       throw new AppError(
-        'Only open requests can be updated',
+        'Only pending requests can be updated',
         400
       );
 
@@ -127,10 +160,10 @@ exports.cancelFactoryRequest = async (
       );
     }
 
-     if (request.status !== 'open') {
+     if (request.status !== 'pending') {
 
       throw new AppError(
-        'Only open requests can be cancelled',
+        'Only pending requests can be cancelled',
         400
       );
     }
@@ -166,10 +199,15 @@ exports.getAllRequests = async (
 
   if (search) {
     where[Op.or] = [
+
       {
-        category: {
+
+        id: {
           [Op.like]: `%${search}%`,
         },
+      },
+
+      {
 
         quantity: {
           [Op.like]: `%${search}%`,
@@ -177,6 +215,13 @@ exports.getAllRequests = async (
       },
       Sequelize.where(
         Sequelize.col('factory.user.name'),
+        {
+          [Op.like]: `%${search}%`,
+        }
+      ),
+
+      Sequelize.where(
+        Sequelize.col('category.name'),
         {
           [Op.like]: `%${search}%`,
         }
@@ -277,6 +322,63 @@ exports.updateRequestStatus = async (
 
     await request.save();
 
+
+    try {
+
+  if (status === 'approved') {
+
+    await notificationService.createNotification({
+
+      userId: request.factory_id,
+
+      type:
+        NOTIFICATION_TYPES.REQUEST_APPROVED,
+
+      title: 'Factory Request Approved',
+
+      message:
+        'Your factory request has been approved.',
+
+      data: {
+        request_id: request.id,
+      },
+
+    });
+
+  }
+
+
+  if (status === 'rejected') {
+
+    await notificationService.createNotification({
+
+      userId: request.factory_id,
+
+      type:
+        NOTIFICATION_TYPES.REQUEST_REJECTED,
+
+      title: 'Factory Request Rejected',
+
+      message:
+        'Your factory request has been rejected.',
+
+      data: {
+        request_id: request.id,
+      },
+
+    });
+
+  }
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed to create request notification:',
+    notificationError
+  );
+
+}
+
     return request;
 
 };
@@ -317,6 +419,35 @@ exports.adminCancelFactoryRequest = async (
     request.status = 'cancelled';
 
     await request.save();
+
+    try {
+
+  await notificationService.createNotification({
+
+    userId: request.factory_id,
+
+    type:
+      NOTIFICATION_TYPES.REQUEST_CANCELLED,
+
+    title: 'Factory Request Cancelled',
+
+    message:
+      'Your factory request has been cancelled.',
+
+    data: {
+      request_id: request.id,
+    },
+
+  });
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed to create request cancellation notification:',
+    notificationError
+  );
+
+}
 
     return request;
 

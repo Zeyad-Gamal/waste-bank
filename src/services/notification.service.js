@@ -1,6 +1,7 @@
 const { Notification } = require('../models');
 const AppError = require('../utils/app-error');
 
+const notificationSocket = require('./notification.socket');
 
 /**
  * Create a notification for a user
@@ -29,13 +30,26 @@ exports.createNotification = async ({
     throw new AppError('Notification message is required', 400);
   }
 
-  return await Notification.create({
+
+
+  const notification = await Notification.create({
     user_id: userId,
     type,
     title,
     message,
     data,
   });
+
+    notificationSocket.emitToUser(
+    userId,
+    notification
+  );
+
+
+  return notification;
+
+
+  
 };
 
 
@@ -47,31 +61,23 @@ exports.getUserNotifications = async (
   options = {}
 ) => {
 
-  const {
-    page = 1,
-    limit = 20,
-    unreadOnly = false,
-  } = options;
+  const page = Number(options.page) || 1;
+  const limit = Number(options.limit) || 20;
 
   const offset = (page - 1) * limit;
 
-  const where = {
-    user_id: userId,
-  };
-
-  if (unreadOnly) {
-    where.is_read = false;
-  }
-
   const { count, rows } =
     await Notification.findAndCountAll({
-      where,
+
+      where: {
+        user_id: userId,
+      },
 
       order: [
         ['created_at', 'DESC'],
       ],
 
-      limit: Number(limit),
+      limit,
       offset,
 
     });
@@ -80,10 +86,11 @@ exports.getUserNotifications = async (
     notifications: rows,
 
     pagination: {
+      page,
+      limit,
       total: count,
-      page: Number(page),
-      limit: Number(limit),
-      total_pages: Math.ceil(count / limit),
+      total_pages:
+        Math.ceil(count / limit),
     },
   };
 };

@@ -12,6 +12,10 @@ const { Op, Sequelize } = require('sequelize');
 
 const AppError = require( '../utils/app-error');
 
+const notificationService = require('./notification.service');
+
+const NOTIFICATION_TYPES = require('../constants/notification-types');
+
 // exports.createPurchase = async (data) => {
 
 //     const transaction =
@@ -191,6 +195,33 @@ exports.createPurchase = async (data) => {
     // await offer.save({ transaction });
 
     await transaction.commit();
+
+    try {
+
+  await notificationService.notifyAdmins({
+    type: NOTIFICATION_TYPES.NEW_PURCHASE,
+
+    title: 'New Purchase Created',
+
+    message:
+      'A new purchase has been created and is waiting for approval.',
+
+    data: {
+      purchase_id: purchase.id,
+      offer_id: purchase.offer_id,
+      quantity: purchase.quantity,
+      price: purchase.price,
+    },
+  });
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed to create purchase notification:',
+    notificationError
+  );
+
+}
 
     return purchase;
   } catch (error) {
