@@ -67,6 +67,8 @@ exports.getMyOffers = asyncHandler(async (req, res) => {
 exports.deleteOffer = asyncHandler(async (req, res) => {
 
 
+  
+
     await offerService.deleteOffer(
       req.params.id,
       req.user.id
@@ -195,3 +197,19 @@ exports.getAllOffers = asyncHandler(async (req, res) => {
 
 
 
+exports.adminDeleteOffer = asyncHandler(async (req, res) => {
+
+
+  
+
+    await offerService.adminDeleteOffer(
+      req.params.id,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Offer deleted successfully',
+    });
+
+}
+);

@@ -142,6 +142,7 @@ exports.addFarmer = async (data) => {
     const token = generateToken({
       id: user.id,
       role: user.role,
+      token_version: user.token_version,
     });
 
     return {

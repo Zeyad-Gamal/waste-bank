@@ -92,4 +92,17 @@ router.get(
 
 
 
+router.delete(
+  '/:id',
+
+  authMiddleware,
+
+  authorizeRoles('farmer'),
+
+  offerController.deleteOffer
+);
+
+
+
+
 module.exports = router;

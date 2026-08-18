@@ -456,3 +456,25 @@ exports.getAllOffers = async (
 
 
 
+exports.adminDeleteOffer = async (
+  offerId,
+) => {
+
+   const offer = await Offer.findByPk(offerId);
+
+  if (!offer) {
+    throw new AppError('Offer not found', 404);
+  }
+
+  if (offer.status !== 'pending') {
+
+    throw new AppError(
+      'Only pending offers can be deleted',
+      400
+    );
+
+  }
+
+  await offer.destroy();
+
+};

@@ -69,6 +69,7 @@ exports.registerFarmer = async (data) => {
     const token = generateToken({
       id: user.id,
       role: user.role,
+      token_version: user.token_version,
     });
 
     return {
@@ -275,6 +276,7 @@ if (user.is_active !== 'active') {
   const token = generateToken({
     id: user.id,
     role: user.role,
+    token_version: user.token_version,
   });
 
   return {
@@ -320,6 +322,7 @@ exports.adminLogin = async (data) => {
   const token = generateToken({
     id: user.id,
     role: user.role,
+    token_version: user.token_version,
   });
 
   return {
@@ -347,3 +350,85 @@ exports.me = async (id) => {
 
 };
 
+
+
+
+
+
+exports.updatePassword = async (
+  userId,
+  data
+) => {
+
+  
+
+
+  const user =
+    await User.findByPk(userId);
+
+
+  if (!user) {
+
+    throw new AppError(
+      'User not found',
+      404
+    );
+
+  }
+
+
+  const isCurrentPasswordValid =
+    await bcrypt.compare(
+      data.current_password,
+      user.password
+    );
+
+
+
+  if (!isCurrentPasswordValid) {
+
+    throw new AppError(
+      'كلمة السر الحاليه غير صحيحه',
+      400
+    );
+
+  }
+
+
+  if (
+    data.current_password ===
+    data.new_password
+  ) {
+
+    throw new AppError(
+      'New password must be different from current password',
+      400
+    );
+
+  }
+
+
+  const hashedPassword =
+    await bcrypt.hash(
+      data.new_password,
+      10
+    );
+
+
+  user.password =
+    hashedPassword;
+
+
+  user.token_version =
+    user.token_version + 1;
+
+
+  await user.save();
+
+
+  return {
+    message:
+      'Password updated successfully',
+  };
+
+};

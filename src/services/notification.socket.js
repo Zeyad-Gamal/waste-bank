@@ -93,6 +93,11 @@ const emitToUser = (
   }
 
 
+  console.log(
+  '📢 Sending notification:',
+  JSON.stringify(notification, null, 2)
+);
+
   io.to(`user:${userId}`).emit(
     'notification:new',
     notification

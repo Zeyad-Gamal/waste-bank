@@ -2,6 +2,9 @@ const { Notification } = require('../models');
 const AppError = require('../utils/app-error');
 
 const notificationSocket = require('./notification.socket');
+const {
+  emitToUser,
+} = require('./notification.socket');
 
 /**
  * Create a notification for a user
@@ -101,6 +104,7 @@ exports.getUserNotifications = async (
  */
 exports.getUnreadCount = async (userId) => {
 
+
   return await Notification.count({
     where: {
       user_id: userId,
@@ -181,29 +185,53 @@ exports.notifyAdmins = async ({
   data = null,
 }) => {
 
-  const { User } = require('../models');
+  const { User } =
+    require('../models');
 
-  const admins = await User.findAll({
-    where: {
-      role: 'admin',
-      is_active: 'active',
-    },
-    attributes: ['id'],
-  });
+
+  const admins =
+    await User.findAll({
+      where: {
+        role: 'admin',
+        is_active: 'active',
+      },
+      attributes: ['id'],
+    });
+
 
   if (!admins.length) {
     return [];
   }
 
-  const notifications = admins.map((admin) => ({
-    user_id: admin.id,
-    type,
-    title,
-    message,
-    data,
-  }));
 
-  return await Notification.bulkCreate(
-    notifications
+  const notifications =
+    admins.map((admin) => ({
+      user_id: admin.id,
+      type,
+      title,
+      message,
+      data,
+    }));
+
+
+  const createdNotifications =
+    await Notification.bulkCreate(
+      notifications
+    );
+
+
+  // Send real-time notifications
+  createdNotifications.forEach(
+    (notification) => {
+
+      emitToUser(
+        notification.user_id,
+        notification
+      );
+
+    }
   );
+
+
+  return createdNotifications;
 };

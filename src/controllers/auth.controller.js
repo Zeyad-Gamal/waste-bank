@@ -28,7 +28,7 @@ exports.registerFarmer = asyncHandler(async (req, res) => {
 );
 
 exports.registerFactory = asyncHandler(async (req, res) => {
-console.log('Factory registration data:', req.body);
+// console.log('Factory registration data:', req.body);
 
     const factoryData = {
 
@@ -143,4 +143,42 @@ exports.resendVerificationEmail = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+
+
+
+
+
+exports.updatePassword = async (
+  req,
+  res,
+  next
+) => {
+
+  try {
+
+
+
+    const result =
+      await authService.updatePassword(
+        req.user.id,
+        req.body
+      );
+
+
+    res.status(200).json({
+
+      success: true,
+
+      data: result,
+
+    });
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
 };

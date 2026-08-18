@@ -82,7 +82,7 @@ router.delete(
   
   authorizeRoles('admin'),
 
-  offerController.deleteOffer
+  offerController.adminDeleteOffer
 );
 
 

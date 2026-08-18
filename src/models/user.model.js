@@ -40,6 +40,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
 
+
+      token_version: {
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  defaultValue: 0,
+},
+
       is_active: {
         type: DataTypes.ENUM('active', 'inactive'),
         allowNull: false,
