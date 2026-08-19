@@ -8,6 +8,11 @@ const { generateToken } = require('../utils/jwt');
 
 const AppError = require('../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
 exports.registerFarmer = async (data) => {
 
   const transaction = await sequelize.transaction();
@@ -21,7 +26,7 @@ exports.registerFarmer = async (data) => {
     });
 
     if (existingUser) {
-      throw new AppError('Phone already exists', 400);
+      throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -111,7 +116,7 @@ exports.registerFactory = async (data) => {
 
     if (existingUser) {
       throw new AppError(
-        'Phone already exists',
+        ERROR_MESSAGES.PHONE_ALREADY_EXISTS,
         400
       );
     }
@@ -125,7 +130,7 @@ exports.registerFactory = async (data) => {
 
     if (existingFactory) {
       throw new AppError(
-        'Factory email already exists',
+        ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
         400
       );
     }
@@ -141,7 +146,7 @@ exports.registerFactory = async (data) => {
 
     if (existingRegistrationNumber) {
       throw new AppError(
-        'Industrial registration number already exists',
+        ERROR_MESSAGES.INDUSTRIAL_NUMBER_ALREADY_EXISTS,
         400
       );
     }
@@ -203,7 +208,7 @@ exports.registerFactory = async (data) => {
     } catch (emailError) {
 
       console.error(
-        'Verification email failed:',
+        ERROR_MESSAGES.EMAIL_NOT_VERIFIED,
         emailError
       );
 
@@ -246,7 +251,7 @@ exports.login = async (data) => {
   });
 
   if (!user) {
-    throw new AppError('Invalid phone or password', 400);
+    throw new AppError(ERROR_MESSAGES.INVALID_CREDENTIALS, 400);
   }
 
   const isPasswordValid = await bcrypt.compare(
@@ -255,12 +260,12 @@ exports.login = async (data) => {
   );
 
   if (!isPasswordValid) {
-    throw new AppError('Invalid phone or password', 400);
+    throw new AppError(ERROR_MESSAGES.INVALID_CREDENTIALS, 400);
   }
 
   if (!user.email_verified) {
   throw new AppError(
-    'Please verify your email before logging in',
+    ERROR_MESSAGES.EMAIL_NOT_VERIFIED,
     403
   );
 }
@@ -268,7 +273,7 @@ exports.login = async (data) => {
 
 if (user.is_active !== 'active') {
   throw new AppError(
-    'Your account is not active',
+    ERROR_MESSAGES.ACCOUNT_NOT_ACTIVE,
     403
   );
 }
@@ -306,7 +311,7 @@ exports.adminLogin = async (data) => {
   });
 
   if (!user) {
-    throw new AppError('Invalid name or password', 400);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 400);
   }
   
 
@@ -316,7 +321,7 @@ exports.adminLogin = async (data) => {
   );
 
   if (!isPasswordValid) {
-    throw new AppError('Invalid phone or password', 400);
+    throw new AppError(ERROR_MESSAGES.INVALID_CREDENTIALS, 400);
   }
 
   const token = generateToken({
@@ -370,7 +375,7 @@ exports.updatePassword = async (
   if (!user) {
 
     throw new AppError(
-      'User not found',
+      ERROR_MESSAGES.USER_NOT_FOUND,
       404
     );
 
@@ -388,7 +393,7 @@ exports.updatePassword = async (
   if (!isCurrentPasswordValid) {
 
     throw new AppError(
-      'كلمة السر الحاليه غير صحيحه',
+      ERROR_MESSAGES.INVALID_CURRENT_PASSWORD,
       400
     );
 
@@ -401,7 +406,7 @@ exports.updatePassword = async (
   ) {
 
     throw new AppError(
-      'New password must be different from current password',
+      ERROR_MESSAGES.NEW_PASSWORD_SAME_AS_OLD,
       400
     );
 
@@ -428,7 +433,7 @@ exports.updatePassword = async (
 
   return {
     message:
-      'Password updated successfully',
+      SUCCESS_MESSAGES.PASSWORD_UPDATED,
   };
 
 };

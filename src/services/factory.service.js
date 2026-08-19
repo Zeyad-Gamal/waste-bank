@@ -6,6 +6,10 @@ const bcrypt = require('bcryptjs');
 
 const { generateToken } = require('../utils/jwt');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
 
 exports.getAllFactories = async (
   
@@ -93,7 +97,7 @@ exports.addFactory = async (data) => {
     });
 
     if (existingUser) {
-      throw new AppError('Phone already exists', 400);
+      throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
     }
 
 
@@ -104,7 +108,7 @@ exports.addFactory = async (data) => {
     });
 
     if (existingFactory) {
-      throw new AppError('Email already exists', 400);
+      throw new AppError(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS, 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -174,12 +178,12 @@ exports.addFactory = async (data) => {
 };
 
 
-exports.updateFarmerStatus = async (id , status) => {
+exports.updateFactoryStatus = async (id , status) => {
 
   const factory = await User.findByPk(id);
 
   if (!factory) {
-    throw new AppError('factory not found', 404);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 404);
   }
 
   factory.is_active = status;
@@ -199,12 +203,12 @@ exports.deleteFactory = async (id) => {
   });
 
   if (!user) {
-    throw new AppError("Factory not found", 404);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 404);
   }
 
   if (user.is_active == "active") {
     throw new AppError(
-      "Only not active factories can be deleted",
+      ERROR_MESSAGES.FACTORY_MUST_BE_INACTIVE_TO_DELETE,
       400
     );
   }

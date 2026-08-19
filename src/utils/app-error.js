@@ -1,13 +1,26 @@
-class AppError
-extends Error {
 
-constructor( message, statusCode ){
 
-super( message );
+class AppError extends Error {
 
-this.statusCode = statusCode;
+  constructor(
+    error,
+    statusCode
+  ) {
 
-}
+    super(error.message);
+
+    this.statusCode = statusCode;
+
+    this.code = error.code;
+
+    this.isOperational = true;
+
+    Error.captureStackTrace(
+      this,
+      this.constructor
+    );
+
+  }
 
 }
 

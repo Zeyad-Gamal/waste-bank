@@ -1,6 +1,10 @@
 const { Op, Sequelize } = require('sequelize');
 const { Offer, OfferImage, User, Farmer, Unit, Category, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
 const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
@@ -129,7 +133,7 @@ exports.updateOffer = async (
   if (offer.status !== 'pending') {
 
     throw new AppError(
-      'Only pending offers can be updated',
+      ERROR_MESSAGES.INVALID_OFFER_STATUS,
       400
     );
 
@@ -191,13 +195,13 @@ exports.deleteOffer = async (
   });
 
   if (!offer) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
   }
 
   if (offer.status !== 'pending') {
 
     throw new AppError(
-      'Only pending offers can be deleted',
+      ERROR_MESSAGES.INVALID_OFFER_STATUS,
       400
     );
 
@@ -235,7 +239,7 @@ exports.getOfferById = async (offerId) => {
   });
 
   if (!offer) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
   }
 
   return offer;
@@ -310,7 +314,7 @@ exports.approveOffer = async (offerId) => {
   const offer = await Offer.findByPk(offerId);
 
   if (!offer) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
   }
 
   offer.status = 'approved';
@@ -344,7 +348,7 @@ exports.rejectOffer = async (offerId) => {
   const offer = await Offer.findByPk(offerId);
 
   if (!offer) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
   }
 
   offer.status = 'rejected';
@@ -463,13 +467,13 @@ exports.adminDeleteOffer = async (
    const offer = await Offer.findByPk(offerId);
 
   if (!offer) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND , 404);
   }
 
   if (offer.status !== 'pending') {
 
     throw new AppError(
-      'Only pending offers can be deleted',
+      ERROR_MESSAGES.INVALID_OFFER_STATUS,
       400
     );
 

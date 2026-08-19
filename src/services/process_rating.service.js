@@ -8,7 +8,9 @@ const {
 } = require('../models');
 
 const AppError = require('../utils/app-error');
+const ERROR_MESSAGES = require('../constants/error-messages');
 
+const SUCCESS_MESSAGES = require('../constants/success-messages');
 
 // ==========================================
 // CREATE RATING
@@ -32,7 +34,7 @@ exports.createRating = async (data, userId) => {
 
   if (exists) {
     throw new AppError(
-      'Already rated',
+      ERROR_MESSAGES.RATING_ALREADY_EXISTS,
       400
     );
   }
@@ -120,7 +122,7 @@ exports.getRatingById = async (ratingId) => {
   if (!rating) {
 
     throw new AppError(
-      'Rating not found',
+      ERROR_MESSAGES.RATING_NOT_FOUND,
       404
     );
 
@@ -320,7 +322,7 @@ exports.deleteRate = async (
    const rating = await Rating.findByPk(Id);
 
   if (!rating) {
-    throw new AppError('Offer not found', 404);
+    throw new AppError(ERROR_MESSAGES.RATING_NOT_FOUND, 404);
   }
 
 

@@ -7,6 +7,8 @@ const {
 
 const emailService = require('./email.service');
 const AppError = require('../utils/app-error');
+const ERROR_MESSAGES = require('../constants/error-messages');
+const SUCCESS_MESSAGES = require('../constants/success-messages');
 
 const TOKEN_EXPIRATION_HOURS = 24;
 
@@ -28,11 +30,11 @@ exports.sendVerificationEmail = async (userId) => {
   const user = await User.findByPk(userId);
 
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 404);
   }
 
   if (user.email_verified) {
-    throw new AppError('Email is already verified', 400);
+    throw new AppError(ERROR_MESSAGES.EMAIL_ALREADY_VERIFIED, 400);
   }
 
   // Invalidate old unused tokens
@@ -98,7 +100,7 @@ exports.sendVerificationEmail = async (userId) => {
   });
 
   return {
-    message: 'Verification email sent successfully',
+    message: SUCCESS_MESSAGES.VERIFICATION_EMAIL_SENT,
   };
 };
 
@@ -107,7 +109,7 @@ exports.verifyEmail = async (rawToken) => {
 
   if (!rawToken) {
     throw new AppError(
-      'Verification token is required',
+      ERROR_MESSAGES.VERIFICATION_TOKEN_REQUIRED,
       400
     );
   }
@@ -133,7 +135,7 @@ exports.verifyEmail = async (rawToken) => {
 
     if (!verificationToken) {
       throw new AppError(
-        'Invalid or already used verification token',
+        ERROR_MESSAGES.INVALID_VERIFICATION_TOKEN,
         400
       );
     }
@@ -151,7 +153,7 @@ exports.verifyEmail = async (rawToken) => {
       );
 
       throw new AppError(
-        'Verification token has expired',
+        ERROR_MESSAGES.VERIFICATION_TOKEN_EXPIRED,
         400
       );
     }
@@ -166,7 +168,7 @@ exports.verifyEmail = async (rawToken) => {
 
     if (!user) {
       throw new AppError(
-        'User not found',
+        ERROR_MESSAGES.USER_NOT_FOUND,
         404
       );
     }
@@ -183,7 +185,7 @@ exports.verifyEmail = async (rawToken) => {
       await transaction.commit();
 
       return {
-        message: 'Email is already verified',
+        message: ERROR_MESSAGES.EMAIL_ALREADY_VERIFIED,
       };
     }
 
@@ -204,7 +206,7 @@ exports.verifyEmail = async (rawToken) => {
     await transaction.commit();
 
     return {
-      message: 'Email verified successfully',
+      message: ERROR_MESSAGES.EMAIL_VERIFIED_SUCCESS,
     };
 
   } catch (error) {
@@ -222,7 +224,7 @@ exports.verifyEmail = async (rawToken) => {
 exports.resendVerificationEmail = async (email) => {
 
   if (!email) {
-    throw new AppError('Email is required', 400);
+    throw new AppError(ERROR_MESSAGES.EMAIL_REQUIRED, 400);
   }
 
   const user = await User.findOne({
@@ -233,13 +235,13 @@ exports.resendVerificationEmail = async (email) => {
   if (!user) {
     return {
       message:
-        'If the email exists, a verification email has been sent.',
+        SUCCESS_MESSAGES.VERIFICATION_EMAIL_SENT,
     };
   }
 
   if (user.email_verified) {
     throw new AppError(
-      'Email is already verified',
+      ERROR_MESSAGES.EMAIL_ALREADY_VERIFIED,
       400
     );
   }
@@ -279,6 +281,6 @@ exports.resendVerificationEmail = async (email) => {
 
   return {
     message:
-      'If the email exists, a verification email has been sent.',
+      SUCCESS_MESSAGES.VERIFICATION_EMAIL_SENT,
   };
 };

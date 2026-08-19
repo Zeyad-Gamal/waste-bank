@@ -7,6 +7,12 @@ const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/jwt');
 
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
+
 exports.getAllFarmers = async (
   
   page,
@@ -96,7 +102,7 @@ exports.addFarmer = async (data) => {
     });
 
     if (existingUser) {
-      throw new AppError('Phone already exists', 400);
+      throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -173,7 +179,7 @@ exports.updateFarmerStatus = async (id , status) => {
   const farmer = await User.findByPk(id);
 
   if (!farmer) {
-    throw new AppError('farmer not found', 404);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 404);
   }
 
   farmer.is_active = status;
@@ -193,12 +199,12 @@ exports.deleteFarmer = async (id) => {
   });
 
   if (!user) {
-    throw new AppError("Farmer not found", 404);
+    throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, 404);
   }
 
   if (user.is_active == "active") {
     throw new AppError(
-      "Only not active farmers can be deleted",
+      ERROR_MESSAGES.FARMER_MUST_BE_INACTIVE_TO_DELETE,
       400
     );
   }

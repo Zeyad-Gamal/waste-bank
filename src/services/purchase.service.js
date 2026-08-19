@@ -12,6 +12,10 @@ const { Op, Sequelize } = require('sequelize');
 
 const AppError = require( '../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
 const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
@@ -136,12 +140,12 @@ exports.createPurchase = async (data) => {
     const offer = await Offer.findByPk(data.offer_id);
 
     if (!offer) {
-      throw new AppError("Offer not found", 404);
+      throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
     }
 
     if (offer.status !== "approved") {
       throw new AppError(
-        "Only approved offers can be purchased",
+        ERROR_MESSAGES.INVALID_OFFER_STATUS,
         400
       );
     }
@@ -367,7 +371,7 @@ exports.updatePurchaseStatus = async (
     if (!purchase) {
 
       throw new AppError(
-        'Purchase not found',
+        ERROR_MESSAGES.PURCHASE_NOT_FOUND,
         404
       );
 
@@ -401,7 +405,7 @@ exports.approvePurchase = async (
     if (!purchase) {
 
       throw new AppError(
-        'Purchase not found',
+        ERROR_MESSAGES.PURCHASE_NOT_FOUND,
         404
       );
 
@@ -428,7 +432,7 @@ exports.rejectPurchase = async (
     if (!purchase) {
 
       throw new AppError(
-        'Purchase not found',
+        ERROR_MESSAGES.PURCHASE_NOT_FOUND,
         404
       );
 
@@ -456,7 +460,7 @@ exports.completePurchase = async (purchaseId) => {
     });
 
     if (!purchase) {
-      throw new AppError("Purchase not found", 404);
+      throw new AppError(ERROR_MESSAGES.PURCHASE_NOT_FOUND, 404);
     }
 
     const offer = await Offer.findByPk(purchase.offer_id, {
@@ -464,7 +468,7 @@ exports.completePurchase = async (purchaseId) => {
     });
 
     if (!offer) {
-      throw new AppError("Offer not found", 404);
+      throw new AppError(ERROR_MESSAGES.OFFER_NOT_FOUND, 404);
     }
 
     // let inventory = await Inventory.findOne({

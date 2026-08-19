@@ -14,6 +14,11 @@ const NOTIFICATION_TYPES = require('../constants/notification-types');
 
 const AppError = require('../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
 const getShipmentRecipientId = async (shipment) => {
 
   if (shipment.related_type === 'purchase') {
@@ -24,7 +29,7 @@ const getShipmentRecipientId = async (shipment) => {
 
     if (!purchase) {
       throw new AppError(
-        'Purchase not found',
+        ERROR_MESSAGES.PURCHASE_NOT_FOUND,
         404
       );
     }
@@ -35,7 +40,7 @@ const getShipmentRecipientId = async (shipment) => {
 
     if (!offer) {
       throw new AppError(
-        'Offer not found',
+        ERROR_MESSAGES.OFFER_NOT_FOUND,
         404
       );
     }
@@ -53,7 +58,7 @@ const getShipmentRecipientId = async (shipment) => {
 
     if (!sale) {
       throw new AppError(
-        'Sale not found',
+        ERROR_MESSAGES.SALE_NOT_FOUND,
         404
       );
     }
@@ -64,7 +69,7 @@ const getShipmentRecipientId = async (shipment) => {
 
 
   throw new AppError(
-    'Invalid shipment related type',
+    ERROR_MESSAGES.INVALID_SHIPMENT_TYPE,
     400
   );
 };
@@ -154,11 +159,11 @@ exports.getShipments = async (
   status
 ) => {
 
-  console.log("page: " + page)
-  console.log("limit: " + limit)
-  console.log("search: " + search)
-  console.log("type: " + type)
-  console.log("status: " + status)
+  // console.log("page: " + page)
+  // console.log("limit: " + limit)
+  // console.log("search: " + search)
+  // console.log("type: " + type)
+  // console.log("status: " + status)
 
   const offset = (page - 1) * limit;
 
@@ -209,7 +214,7 @@ exports.updateShipmentStatus = async (
   if (!shipment) {
 
     throw new AppError(
-      'Shipment not found',
+      ERROR_MESSAGES.SHIPMENT_NOT_FOUND,
       404
     );
 
@@ -336,7 +341,7 @@ exports.getShipmentById = async (shipmentId) => {
   const shipment = await Shipment.findByPk(shipmentId);
 
   if (!shipment) {
-    throw new AppError('Shipment not found', 404);
+    throw new AppError(ERROR_MESSAGES.SHIPMENT_NOT_FOUND, 404);
   }
 
   return shipment;

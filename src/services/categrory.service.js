@@ -3,6 +3,11 @@ const { Unit, Category, Offer, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 const { symbol } = require('joi');
 
+
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+
+
 exports.createCategory = async (data) => {
 
   const transaction = await sequelize.transaction();
@@ -51,7 +56,7 @@ exports.updateCategory = async (
   });
 
   if (!category) {
-    throw new AppError('Category not found', 404);
+    throw new AppError(ERROR_MESSAGES.CATEGORY_NOT_FOUND, 404);
   }
 
 

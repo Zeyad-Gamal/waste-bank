@@ -3,6 +3,11 @@ const { Unit, Category, sequelize } = require('../models');
 const AppError = require( '../utils/app-error');
 const { symbol } = require('joi');
 
+
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
 exports.createUnit = async (data) => {
 
   const transaction = await sequelize.transaction();
@@ -53,13 +58,13 @@ exports.updateUnit = async (
   });
 
   if (!unit) {
-    throw new AppError('Unit not found', 404);
+    throw new AppError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, 404);
   }
 
   if (unit.status !== 'active') {
 
     throw new AppError(
-      'Only active units can be updated',
+      ERROR_MESSAGES.INVALID_RESOURCE_VALUE,
       400
     );
 

@@ -12,6 +12,11 @@ const {
 } = require('../models');
 const AppError = require( '../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
 exports.createSale = async (data) => {
   const transaction = await sequelize.transaction();
 
@@ -24,11 +29,11 @@ exports.createSale = async (data) => {
     );
 
     if (!request) {
-      throw new AppError('Request not found', 404);
+      throw new AppError(ERROR_MESSAGES.FACTORY_REQUEST_NOT_FOUND, 404);
     }
 
     if (request.status === 'cancelled') {
-      throw new AppError('Request cancelled', 400);
+      throw new AppError(ERROR_MESSAGES.FACTORY_REQUEST_CANCELLED, 400);
     }
 
     const sale = await Sale.create(
@@ -52,11 +57,11 @@ exports.createSale = async (data) => {
       );
 
       if (!inventory) {
-        throw new AppError('Inventory not found', 404);
+        throw new AppError(ERROR_MESSAGES.INVENTORY_NOT_FOUND, 404);
       }
 
       if (inventory.remaining_quantity < item.quantity) {
-        throw new AppError('Insufficient quantity', 400);
+        throw new AppError(ERROR_MESSAGES.INSUFFICIENT_INVENTORY, 400);
       }
 
       inventory.remaining_quantity -= item.quantity;
@@ -280,7 +285,7 @@ exports.updateSale = async (id, data) => {
         );
 
         if (!inventory) {
-          throw new AppError('Inventory not found', 404);
+          throw new AppError(ERROR_MESSAGES.INVENTORY_NOT_FOUND, 404);
         }
 
         inventory.remaining_quantity += oldItem.quantity;
@@ -310,11 +315,11 @@ exports.updateSale = async (id, data) => {
         );
 
         if (!inventory) {
-          throw new AppError('Inventory not found', 404);
+          throw new AppError(ERROR_MESSAGES.INVENTORY_NOT_FOUND, 404);
         }
 
         if (inventory.remaining_quantity < item.quantity) {
-          throw new AppError('Insufficient quantity', 400);
+          throw new AppError(ERROR_MESSAGES.INSUFFICIENT_INVENTORY, 400);
         }
 
                 
@@ -504,7 +509,7 @@ exports.approveSale = async (
     if (!sale) {
 
       throw new AppError(
-        'Sale not found',
+        ERROR_MESSAGES.SALE_NOT_FOUND,
         404
       );
 
@@ -532,7 +537,7 @@ exports.rejectSale = async (
     if (!sale) {
 
       throw new AppError(
-        'Sale not found',
+        ERROR_MESSAGES.SALE_NOT_FOUND,
         404
       );
 
@@ -559,7 +564,7 @@ exports.completeSale = async (
     if (!sale) {
 
       throw new AppError(
-        'Sale not found',
+        ERROR_MESSAGES.SALE_NOT_FOUND,
         404
       );
 

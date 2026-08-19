@@ -8,6 +8,14 @@ const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
 
+
+
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
+
 exports.createFactoryRequest = async (data) => {
 
     const request =
@@ -117,7 +125,7 @@ exports.updateFactoryRequest =  async (
 
     if (!request) {
       throw new AppError(
-        'Factory request not found',
+        ERROR_MESSAGES.FACTORY_REQUEST_NOT_FOUND,
         404
       );
     }
@@ -125,7 +133,7 @@ exports.updateFactoryRequest =  async (
     if (request.status !== 'pending') {
 
       throw new AppError(
-        'Only pending requests can be updated',
+        ERROR_MESSAGES.INVALID_FACTORY_REQUEST_STATUS,
         400
       );
 
@@ -155,7 +163,7 @@ exports.cancelFactoryRequest = async (
 
     if (!request) {
       throw new AppError(
-        'Factory request not found',
+        ERROR_MESSAGES.FACTORY_REQUEST_NOT_FOUND,
         404
       );
     }
@@ -163,7 +171,7 @@ exports.cancelFactoryRequest = async (
      if (request.status !== 'pending') {
 
       throw new AppError(
-        'Only pending requests can be cancelled',
+        ERROR_MESSAGES.INVALID_FACTORY_REQUEST_STATUS,
         400
       );
     }
@@ -300,12 +308,11 @@ exports.updateRequestStatus = async (
 
       });
 
-          console.log(request.status)
 
 
     if (!request) {
       throw new AppError(
-        'Factory request not found',
+        ERROR_MESSAGES.FACTORY_REQUEST_NOT_FOUND,
         404
       );
     }
@@ -313,7 +320,7 @@ exports.updateRequestStatus = async (
      if (request.status !== 'pending') {
 
       throw new AppError(
-        'Only pending or requests can be updated',
+        ERROR_MESSAGES.INVALID_FACTORY_REQUEST_STATUS,
         400
       );
     }
@@ -403,7 +410,7 @@ exports.adminCancelFactoryRequest = async (
 
     if (!request) {
       throw new AppError(
-        'Factory request not found',
+        ERROR_MESSAGES.FACTORY_REQUEST_NOT_FOUND,
         404
       );
     }
@@ -411,7 +418,7 @@ exports.adminCancelFactoryRequest = async (
      if (request.status !== 'pending' && request.status !== 'approved') {
 
       throw new AppError(
-        'Only pending or approved requests can be cancelled',
+        ERROR_MESSAGES.INVALID_FACTORY_REQUEST_STATUS,
         400
       );
     }

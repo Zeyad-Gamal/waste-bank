@@ -1,6 +1,10 @@
 const { Notification } = require('../models');
 const AppError = require('../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
 const notificationSocket = require('./notification.socket');
 const {
   emitToUser,
@@ -133,7 +137,7 @@ exports.markAsRead = async (
 
   if (!notification) {
     throw new AppError(
-      'Notification not found',
+      ERROR_MESSAGES.NOTIFICATION_NOT_FOUND,
       404
     );
   }
@@ -170,7 +174,7 @@ exports.markAllAsRead = async (userId) => {
   );
 
   return {
-    message: 'All notifications marked as read',
+    message: SUCCESS_MESSAGES.ALL_NOTIFICATIONS_READ,
   };
 };
 

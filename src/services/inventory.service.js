@@ -5,6 +5,11 @@ const {
 } = require('../models');
 const AppError = require( '../utils/app-error');
 
+const ERROR_MESSAGES = require('../constants/error-messages');
+
+const SUCCESS_MESSAGES = require('../constants/success-messages');
+
+
 // exports.getInventory = async () => {
 
 //     const inventory =
@@ -82,7 +87,7 @@ exports.getInventoryItem = async (inventoryId) => {
     if (!item) {
 
       throw new AppError(
-        'Inventory item not found',
+        ERROR_MESSAGES.INVENTORY_NOT_FOUND,
         404
       );
 
@@ -105,7 +110,7 @@ exports.updateInventory = async (
     if (!item) {
 
       throw new AppError(
-        'Inventory item not found',
+        ERROR_MESSAGES.INVENTORY_NOT_FOUND,
         404
       );
 

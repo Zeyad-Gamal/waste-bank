@@ -75,7 +75,7 @@ exports.updateFactoryStatus = asyncHandler(async (req, res) => {
 
 
     const result =
-      await factoryService.updateFarmerStatus(
+      await factoryService.updateFactoryStatus(
         req.params.id,
         activation
       );
