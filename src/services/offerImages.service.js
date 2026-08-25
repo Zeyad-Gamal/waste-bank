@@ -20,7 +20,6 @@ exports.getAllOfferImages = async (
     offerWhere[Op.or] = [
 
       { '$offer.type$': { [Op.like]: `%${search}%` } },
-      { '$offer.item_type$': { [Op.like]: `%${search}%` } },
       { '$offer.description$': { [Op.like]: `%${search}%` } },
       { '$offer.farmer.user.name$': { [Op.like]: `%${search}%` } }
     ];
