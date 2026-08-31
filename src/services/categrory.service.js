@@ -93,4 +93,22 @@ exports.getAllCategories = async () => {
 };
 
 
+exports.getAll = async () => {
+  
+
+  const rows = await Category.findAll({
+
+
+    order: [['created_at', 'DESC']],
+
+
+    distinct: true,
+  });
+
+  return {
+    categories: rows,
+  };
+};
+
+
 

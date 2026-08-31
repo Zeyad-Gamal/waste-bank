@@ -112,13 +112,32 @@ const getStats = async () => {
       where: {
         role: {
           [Op.in]: ['farmer', 'factory'],
-        }
+        },
+        deletedAt: {
+      [Op.is]: null,
+    },
       }
     }),
 
-    Farmer.count(),
+    Farmer.count({
+include: [
+    {
+      model: User,
+      as: 'user',
+      required: true,
+    },
+  ],
+}),
 
-    Factory.count(),
+    Factory.count({
+include: [
+    {
+      model: User,
+      as: 'user',
+      required: true,
+    },
+  ],
+}),
 
 
     Offer.count({

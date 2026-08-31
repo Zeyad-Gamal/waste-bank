@@ -59,3 +59,21 @@ exports.getAllCategories = asyncHandler(async (req, res) => {
 
 }
 );
+
+
+
+exports.getAll = asyncHandler(async (req, res) => {
+
+
+
+
+    const result =
+      await categoryService.getAll();
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+
+}
+);
