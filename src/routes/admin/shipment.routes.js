@@ -22,10 +22,9 @@ require('../../validations/shipment.validation');
 router.post(
   '/',
 
-     authMiddleware,
-  
-    authorizeRoles('admin'),
-
+  authMiddleware, 
+  authorizeRoles('admin'),
+  validate(createShipmentSchema),
   controller.createShipment
 );
 

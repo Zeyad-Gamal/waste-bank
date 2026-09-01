@@ -26,6 +26,10 @@ router.post(
   
     authorizeRoles('admin'),
 
+    validate(
+    createSaleSchema
+  ),
+
   controller.createSale
 );
 

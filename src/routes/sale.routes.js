@@ -14,34 +14,7 @@ const authorizeRoles =
 const validate =
   require('../middlewares/validation.middleware');
 
-const {
-  createSaleSchema,
-} =
-require('../validations/sale.validation');
 
-router.post(
-  '/',
-
-  authMiddleware,
-
-  authorizeRoles('admin'),
-
-  validate(
-    createSaleSchema
-  ),
-
-  controller.createSale
-);
-
-router.get(
-  '/',
-
-  authMiddleware,
-
-  authorizeRoles('admin'),
-
-  controller.getSales
-);
 
 router.get(
   '/my-sales',
@@ -53,14 +26,6 @@ router.get(
   controller.getFactorySales
 );
 
-router.patch(
-  '/:id/status',
 
-  authMiddleware,
-
-  authorizeRoles('admin'),
-
-  controller.updateStatus
-);
 
 module.exports = router;

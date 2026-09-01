@@ -16,9 +16,9 @@ const validate = require('../middlewares/validation.middleware');
 router.get(
   '/',
 
-  // authMiddleware,
+  authMiddleware,
   
-  // authorizeRoles('admin'),
+  authorizeRoles('farmer'),
 
   categoryController.getAll
 );

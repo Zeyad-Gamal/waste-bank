@@ -15,12 +15,8 @@ const upload = require('../../utils/multer');
 
 
 const {
-  createOfferSchema,
-} = require('../../validations/offer.validation');
-
-const {
-  updateOfferSchema,
-} = require('../../validations/offer.validation');
+  createPurchaseSchema,
+} = require('../validations/purchase.validation');
 
 
 
@@ -40,10 +36,9 @@ router.get(
 router.post(
   '/',
 
-      authMiddleware,
-  
-    authorizeRoles('admin'),
-
+  authMiddleware,
+  authorizeRoles('admin'),
+  validate(createPurchaseSchema),
   purchaseController.createPurchase
 );
 

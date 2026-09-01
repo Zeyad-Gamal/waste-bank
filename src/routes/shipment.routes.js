@@ -12,34 +12,5 @@ const {
   createShipmentSchema
 } = require('../validations/shipment.validation');
 
-router.post(
-  '/',
-  auth,
-  role('admin'),
-  validate(createShipmentSchema),
-  controller.createShipment
-);
-
-router.get(
-  '/',
-  auth,
-  controller.getShipments
-);
-
-
-router.get(
-  '/:id',
-  auth,
-
-  controller.getShipmentById
-);
-
-
-router.patch(
-  '/:id/status',
-  auth,
-  role('admin'),
-  controller.updateShipmentStatus
-);
 
 module.exports = router;

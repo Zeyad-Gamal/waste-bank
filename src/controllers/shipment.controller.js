@@ -68,3 +68,20 @@ exports.getShipmentById = asyncHandler(async (req, res) => {
     });
 
 });
+
+
+exports.getMyShipments = asyncHandler(async (req, res) => {
+
+
+    const result = await service.getMyShipments(
+      req.user.id,
+      req.user.role
+    );
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+
+}
+);

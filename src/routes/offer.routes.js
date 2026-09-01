@@ -73,7 +73,7 @@ router.get(
   '/:id',
 
   authMiddleware,
-
+  authorizeRoles('farmer','factory'),
   offerController.getOfferById
 );
 
@@ -82,7 +82,7 @@ router.get(
     '/',
     
     authMiddleware,
-    
+    authorizeRoles('farmer','factory'),
     offerController.getAllOffers
 );
 

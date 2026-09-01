@@ -19,6 +19,84 @@ const ERROR_MESSAGES = require('../constants/error-messages');
 const SUCCESS_MESSAGES = require('../constants/success-messages');
 
 
+exports.getMyShipments = async (userId , role) => {
+
+  
+  if(role == "farmer"){
+      const shipments = await Shipment.findAll({
+
+    where: {
+      related_type: 'purchase',
+    },
+
+    include:[
+
+      {
+        model: Purchase,
+        as: 'purchase',
+        required: true,
+        
+        include:[
+          {
+            model: Offer,
+            as: 'offer',
+            required: true,
+            where:{
+              farmer_id: userId
+            }
+          }
+        ]
+      }
+
+    ],
+
+    order: [
+      ['created_at', 'DESC']
+    ],
+
+  });
+  }
+  else if(role == "factory"){
+
+      const shipments = await Shipment.findAll({
+
+    where: {
+      related_type: 'sale',
+    },
+
+    include:[
+
+      {
+        model: Sale,
+        as: 'sale',
+        required: true,
+        
+        include:[
+          {
+            model: FactoryRequest,
+            as: 'request',
+            required: true,
+            where:{
+              factory_id: userId
+            }
+          }
+        ]
+      }
+
+    ],
+
+    order: [
+      ['created_at', 'DESC']
+    ],
+
+  });
+  }
+
+
+  return shipments;
+
+};
+
 const getShipmentRecipientId = async (shipment) => {
 
   if (shipment.related_type === 'purchase') {
