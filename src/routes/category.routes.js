@@ -18,7 +18,7 @@ router.get(
 
   authMiddleware,
   
-  authorizeRoles('farmer'),
+  authorizeRoles('farmer','factory'),
 
   categoryController.getAll
 );

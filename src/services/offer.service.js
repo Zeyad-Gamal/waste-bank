@@ -162,7 +162,7 @@ exports.getMyOffers = async (farmerId) => {
         include:[
           {
             model: Unit,
-            as: 'unit'
+            as: 'defaultUnit'
           }
         ]
       }
@@ -230,7 +230,7 @@ exports.getOfferById = async (offerId) => {
         include:[
           {
             model: Unit,
-            as: 'unit'
+            as: 'defaultUnit'
           }
         ]
       }

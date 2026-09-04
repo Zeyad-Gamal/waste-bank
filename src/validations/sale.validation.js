@@ -18,7 +18,10 @@ exports.createSaleSchema = Joi.object({
 
         quantity: Joi.number()
           .positive()
-          .required()
+          .required(),
+
+        price: Joi.number()
+            .required(),
       })
     )
     .min(1)

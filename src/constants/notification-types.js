@@ -18,4 +18,9 @@ module.exports = {
   SHIPMENT_COMPLETED: 'shipment_completed',
   SHIPMENT_CANCELLED: 'shipment_cancelled',
 
+
+  // purchases
+
+  NEW_PURCHASE: 'new_purchase'
+
 };

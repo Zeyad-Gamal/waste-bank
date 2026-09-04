@@ -89,7 +89,7 @@ exports.getMyRequests = async (
           include: [
             {
             model: Unit,
-            as: 'unit'
+            as: 'defaultUnit'
             }
           ]
         }

@@ -3,7 +3,7 @@ const Joi = require('joi');
 exports.createFactoryRequestSchema =
   Joi.object({
 
-    category: Joi.string()
+    category_id: Joi.string()
       .required(),
 
     quantity: Joi.number()

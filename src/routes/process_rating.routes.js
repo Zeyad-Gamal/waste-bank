@@ -36,12 +36,5 @@ router.get(
 );
 
 
-router.get(
-  '/',
-  authMiddleware,
-  authorizeRoles('admin'),
-  controller.getRatings
-);
-
 
 module.exports = router;

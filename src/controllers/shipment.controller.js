@@ -70,18 +70,29 @@ exports.getShipmentById = asyncHandler(async (req, res) => {
 });
 
 
-exports.getMyShipments = asyncHandler(async (req, res) => {
+exports.getUserShipments =asyncHandler( async (
+  req,
+  res,
+  next
+) => {
+
+  try {
+
+    const shipments =
+      await service.getUserShipments(
+        req.user.id
+      );
 
 
-    const result = await service.getMyShipments(
-      req.user.id,
-      req.user.role
-    );
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      data: result,
+      data: shipments,
     });
 
-}
-);
+  } catch (error) {
+
+    next(error);
+
+  }
+
+});

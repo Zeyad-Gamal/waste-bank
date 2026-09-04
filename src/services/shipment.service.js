@@ -6,6 +6,7 @@ const {
   Offer,
   Sale,
   Factory,
+  FactoryRequest
 } = require('../models');
 
 const notificationService = require('./notification.service');
@@ -19,82 +20,75 @@ const ERROR_MESSAGES = require('../constants/error-messages');
 const SUCCESS_MESSAGES = require('../constants/success-messages');
 
 
-exports.getMyShipments = async (userId , role) => {
+exports.getUserShipments = async (userId) => {
 
-  
-  if(role == "farmer"){
-      const shipments = await Shipment.findAll({
-
+  const factory = await Factory.findOne({
+    
     where: {
-      related_type: 'purchase',
+      user_id: userId,
     },
-
-    include:[
-
-      {
-        model: Purchase,
-        as: 'purchase',
-        required: true,
-        
-        include:[
-          {
-            model: Offer,
-            as: 'offer',
-            required: true,
-            where:{
-              farmer_id: userId
-            }
-          }
-        ]
-      }
-
-    ],
-
-    order: [
-      ['created_at', 'DESC']
-    ],
-
   });
+
+  if (!factory) {
+    throw new AppError(
+      'Factory not found',
+      404
+    );
   }
-  else if(role == "factory"){
 
-      const shipments = await Shipment.findAll({
 
-    where: {
-      related_type: 'sale',
-    },
+  const requests =
+    await FactoryRequest.findAll({
+      where: {
+        factory_id: factory.id,
+      },
+      attributes: ['id'],
+    });
 
-    include:[
 
-      {
-        model: Sale,
-        as: 'sale',
-        required: true,
-        
-        include:[
-          {
-            model: FactoryRequest,
-            as: 'request',
-            required: true,
-            where:{
-              factory_id: userId
-            }
-          }
-        ]
-      }
+  const requestIds = requests.map(
+    (request) => request.id
+  );
 
-    ],
 
-    order: [
-      ['created_at', 'DESC']
-    ],
-
-  });
+  if (!requestIds.length) {
+    return [];
   }
+
+
+  const sales =
+    await Sale.findAll({
+      where: {
+        request_id: requestIds,
+      },
+      attributes: ['id'],
+    });
+
+
+  const saleIds = sales.map(
+    (sale) => sale.id
+  );
+
+
+  if (!saleIds.length) {
+    return [];
+  }
+
+
+  const shipments =
+    await Shipment.findAll({
+      where: {
+        related_type: 'sale',
+        related_id: saleIds,
+      },
+
+      order: [
+        ['created_at', 'DESC'],
+      ],
+    });
 
 
   return shipments;
-
 };
 
 const getShipmentRecipientId = async (shipment) => {

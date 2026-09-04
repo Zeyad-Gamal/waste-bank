@@ -16,7 +16,7 @@ const upload = require('../../utils/multer');
 
 const {
   createPurchaseSchema,
-} = require('../validations/purchase.validation');
+} = require('../../validations/purchase.validation');
 
 
 

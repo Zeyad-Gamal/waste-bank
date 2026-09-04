@@ -11,34 +11,34 @@ const authMiddleware =
 const authorizeRoles =
   require('../middlewares/role.middleware');
 
-router.get(
-  '/',
+// router.get(
+//   '/',
 
-  authMiddleware,
+//   authMiddleware,
 
-  authorizeRoles('admin'),
+//   authorizeRoles('admin'),
 
-  controller.getInventory
-);
+//   controller.getInventory
+// );
 
-router.get(
-  '/:id',
+// router.get(
+//   '/:id',
 
-  authMiddleware,
+//   authMiddleware,
 
-  authorizeRoles('admin'),
+//   authorizeRoles('admin'),
 
-  controller.getInventoryItem
-);
+//   controller.getInventoryItem
+// );
 
-router.patch(
-  '/:id',
+// router.patch(
+//   '/:id',
 
-  authMiddleware,
+//   authMiddleware,
 
-  authorizeRoles('admin'),
+//   authorizeRoles('admin'),
 
-  controller.updateInventory
-);
+//   controller.updateInventory
+// );
 
 module.exports = router;

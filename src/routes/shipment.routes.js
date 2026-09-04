@@ -8,9 +8,13 @@ const role = require('../middlewares/role.middleware');
 
 const validate = require('../middlewares/validation.middleware');
 
-const {
-  createShipmentSchema
-} = require('../validations/shipment.validation');
+
+router.get(
+    '/my',
+    auth,
+    role('factory'),
+    controller.getUserShipments
+);
 
 
 module.exports = router;
