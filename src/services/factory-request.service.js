@@ -7,6 +7,7 @@ const AppError = require( '../utils/app-error');
 const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
+const NOTIFICATION_MESSAGES = require('../constants/notification-messages');
 
 
 
@@ -39,10 +40,10 @@ exports.createFactoryRequest = async (data) => {
 
       type: NOTIFICATION_TYPES.NEW_REQUEST,
 
-      title: 'New Factory Request',
+      title: NOTIFICATION_MESSAGES.NEW_REQUEST_TITLE,
 
       message:
-        'A new factory request has been submitted.',
+        NOTIFICATION_MESSAGES.NEW_REQUEST_MESSAGE,
 
       data: {
         request_id: request.id,
@@ -57,7 +58,7 @@ exports.createFactoryRequest = async (data) => {
   } catch (notificationError) {
 
     console.error(
-      'Failed to create factory request notification:',
+      'Failed notification:',
       notificationError
     );
 
@@ -341,10 +342,10 @@ exports.updateRequestStatus = async (
       type:
         NOTIFICATION_TYPES.REQUEST_APPROVED,
 
-      title: 'Factory Request Approved',
+      title: NOTIFICATION_MESSAGES.REQUEST_APPROVED_TITLE,
 
       message:
-        'Your factory request has been approved.',
+        NOTIFICATION_MESSAGES.REQUEST_APPROVED_MESSAGE,
 
       data: {
         request_id: request.id,
@@ -364,10 +365,10 @@ exports.updateRequestStatus = async (
       type:
         NOTIFICATION_TYPES.REQUEST_REJECTED,
 
-      title: 'Factory Request Rejected',
+      title: NOTIFICATION_MESSAGES.REQUEST_REJECTED_TITLE,
 
       message:
-        'Your factory request has been rejected.',
+        NOTIFICATION_MESSAGES.REQUEST_REJECTED_MESSAGE,
 
       data: {
         request_id: request.id,
@@ -380,7 +381,7 @@ exports.updateRequestStatus = async (
 } catch (notificationError) {
 
   console.error(
-    'Failed to create request notification:',
+    'Failed notification:',
     notificationError
   );
 
@@ -436,10 +437,10 @@ exports.adminCancelFactoryRequest = async (
     type:
       NOTIFICATION_TYPES.REQUEST_CANCELLED,
 
-    title: 'Factory Request Cancelled',
+    title: NOTIFICATION_MESSAGES.REQUEST_CANCELLED_TITLE,
 
     message:
-      'Your factory request has been cancelled.',
+      NOTIFICATION_MESSAGES.REQUEST_CANCELLED_MESSAGE,
 
     data: {
       request_id: request.id,
@@ -450,7 +451,7 @@ exports.adminCancelFactoryRequest = async (
 } catch (notificationError) {
 
   console.error(
-    'Failed to create request cancellation notification:',
+    'Failed notification:',
     notificationError
   );
 

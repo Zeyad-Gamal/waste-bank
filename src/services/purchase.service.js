@@ -20,6 +20,9 @@ const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
 
+const NOTIFICATION_MESSAGES = require('../constants/notification-messages');
+
+
 // exports.createPurchase = async (data) => {
 
 //     const transaction =
@@ -202,26 +205,45 @@ exports.createPurchase = async (data) => {
 
     try {
 
-  await notificationService.notifyAdmins({
-    type: NOTIFICATION_TYPES.NEW_PURCHASE,
+  // await notificationService.notifyAdmins({
+  //   type: NOTIFICATION_TYPES.NEW_PURCHASE,
 
-    title: 'New Purchase Created',
+  //   title: 'New Purchase Created',
 
-    message:
-      'A new purchase has been created and is waiting for approval.',
+  //   message:
+  //     'A new purchase has been created and is waiting for approval.',
 
-    data: {
-      purchase_id: purchase.id,
-      offer_id: purchase.offer_id,
-      quantity: purchase.quantity,
-      price: purchase.price,
-    },
-  });
+  //   data: {
+  //     purchase_id: purchase.id,
+  //     offer_id: purchase.offer_id,
+  //     quantity: purchase.quantity,
+  //     price: purchase.price,
+  //   },
+  // });
+
+
+  await notificationService.createNotification({
+  
+        userId: offer.farmer_id,
+  
+        type:
+          NOTIFICATION_TYPES.NEW_PURCHASE,
+  
+        title: NOTIFICATION_MESSAGES.NEW_PURCHASE_TITLE,
+  
+        message:
+          NOTIFICATION_MESSAGES.NEW_PURCHASE_MESSAGE,
+  
+        data: {
+          offer_id: data.offer_id,
+        },
+  
+      });
 
 } catch (notificationError) {
 
   console.error(
-    'Failed to create purchase notification:',
+    'Failed notification:',
     notificationError
   );
 
@@ -415,6 +437,40 @@ exports.approvePurchase = async (
 
     await purchase.save();
 
+    const offer =
+      await Offer.findByPk(
+        purchase.offer_id
+      );
+
+       try {
+
+  await notificationService.createNotification({
+  
+        userId: offer.farmer_id,
+  
+        type:
+          NOTIFICATION_TYPES.PURCHASE_APPROVED,
+  
+        title: NOTIFICATION_MESSAGES.PURCHASE_APPROVED_TITLE,
+  
+        message:
+          NOTIFICATION_MESSAGES.PURCHASE_APPROVED_MESSAGE,
+  
+        data: {
+          offer_id: purchase.offer_id,
+        },
+  
+      });
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed notification:',
+    notificationError
+  );
+
+}
+
     return purchase;
 
 };
@@ -441,6 +497,41 @@ exports.rejectPurchase = async (
     purchase.status = "rejected";
 
     await purchase.save();
+
+
+        const offer =
+      await Offer.findByPk(
+        purchase.offer_id
+      );
+
+       try {
+
+  await notificationService.createNotification({
+  
+        userId: offer.farmer_id,
+  
+        type:
+          NOTIFICATION_TYPES.PURCHASE_REJECTED,
+  
+        title: NOTIFICATION_MESSAGES.PURCHASE_REJECTED_TITLE,
+  
+        message:
+          NOTIFICATION_MESSAGES.PURCHASE_REJECTED_MESSAGE,
+  
+        data: {
+          offer_id: purchase.offer_id,
+        },
+  
+      });
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed notification:',
+    notificationError
+  );
+
+}
 
     return purchase;
 
@@ -501,6 +592,43 @@ exports.completePurchase = async (purchaseId) => {
     await purchase.save({ transaction });
 
     await transaction.commit();
+
+
+
+
+     const offer =
+      await Offer.findByPk(
+        purchase.offer_id
+      );
+
+       try {
+
+  await notificationService.createNotification({
+  
+        userId: offer.farmer_id,
+  
+        type:
+          NOTIFICATION_TYPES.PURCHASE_COMPLETED,
+  
+        title: NOTIFICATION_MESSAGES.PURCHASE_COMPLETED_TITLE,
+  
+        message:
+          NOTIFICATION_MESSAGES.PURCHASE_COMPLETED_MESSAGE,
+  
+        data: {
+          offer_id: purchase.offer_id,
+        },
+  
+      });
+
+} catch (notificationError) {
+
+  console.error(
+    'Failed notification:',
+    notificationError
+  );
+
+}
 
     return purchase;
   } catch (error) {

@@ -211,7 +211,7 @@ exports.createShipment = async (data) => {
   } catch (notificationError) {
 
     console.error(
-      'Failed to create shipment notification:',
+      'Failed notification:',
       notificationError
     );
 
@@ -396,7 +396,7 @@ exports.updateShipmentStatus = async (
   } catch (notificationError) {
 
     console.error(
-      'Failed to create shipment notification:',
+      'Failed notification:',
       notificationError
     );
 

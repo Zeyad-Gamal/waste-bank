@@ -16,6 +16,10 @@ const ERROR_MESSAGES = require('../constants/error-messages');
 
 const SUCCESS_MESSAGES = require('../constants/success-messages');
 
+const NOTIFICATION_TYPES = require('../constants/notification-types');
+
+const NOTIFICATION_MESSAGES = require('../constants/notification-messages');
+
 
 exports.createSale = async (data) => {
   const transaction = await sequelize.transaction();
@@ -83,13 +87,44 @@ exports.createSale = async (data) => {
       );
     }
 
-    request.status = 'fulfilled';
+    request.status = 'pending';
+    // request.status = 'fulfilled';
 
     await request.save({
       transaction
     });
 
     await transaction.commit();
+
+
+     try {
+    
+      await notificationService.createNotification({
+      
+            userId: request.factory_id,
+      
+            type:
+              NOTIFICATION_TYPES.NEW_SALE,
+      
+            title: NOTIFICATION_MESSAGES.NEW_SALE_TITLE,
+      
+            message:
+              NOTIFICATION_MESSAGES.NEW_SALE_MESSAGE,
+      
+            data: {
+              request_id: data.request_id,
+            },
+      
+          });
+    
+    } catch (notificationError) {
+    
+      console.error(
+        'Failed notification:',
+        notificationError
+      );
+    
+    }
 
     return sale;
   } catch (error) {
@@ -519,6 +554,38 @@ exports.approveSale = async (
 
     await sale.save();
 
+    const request = await FactoryRequest.findByPk(sale.request_id);
+
+
+    try {
+    
+      await notificationService.createNotification({
+      
+            userId: request.factory_id,
+      
+            type:
+              NOTIFICATION_TYPES.SALE_APPROVED,
+      
+            title: NOTIFICATION_MESSAGES.SALE_APPROVED_TITLE,
+      
+            message:
+              NOTIFICATION_MESSAGES.SALE_APPROVED_MESSAGE,
+      
+            data: {
+              request_id: sale.request_id,
+            },
+      
+          });
+    
+    } catch (notificationError) {
+    
+      console.error(
+        'Failed notification:',
+        notificationError
+      );
+    
+    }
+
     return sale;
 
 };
@@ -547,6 +614,39 @@ exports.rejectSale = async (
 
     await sale.save();
 
+
+    const request = await FactoryRequest.findByPk(sale.request_id);
+
+
+    try {
+    
+      await notificationService.createNotification({
+      
+            userId: request.factory_id,
+      
+            type:
+              NOTIFICATION_TYPES.SALE_REJECTED,
+      
+            title: NOTIFICATION_MESSAGES.SALE_REJECTED_TITLE,
+      
+            message:
+              NOTIFICATION_MESSAGES.SALE_REJECTED_MESSAGE,
+      
+            data: {
+              request_id: sale.request_id,
+            },
+      
+          });
+    
+    } catch (notificationError) {
+    
+      console.error(
+        'Failed notification:',
+        notificationError
+      );
+    
+    }
+
     return sale;
 
 };
@@ -573,6 +673,39 @@ exports.completeSale = async (
     sale.status = "completed";
 
     await sale.save();
+
+
+      const request = await FactoryRequest.findByPk(sale.request_id);
+
+
+    try {
+    
+      await notificationService.createNotification({
+      
+            userId: request.factory_id,
+      
+            type:
+              NOTIFICATION_TYPES.SALE_COMPLETED,
+      
+            title: NOTIFICATION_MESSAGES.SALE_COMPLETED_TITLE,
+      
+            message:
+              NOTIFICATION_MESSAGES.SALE_COMPLETED_MESSAGE,
+      
+            data: {
+              request_id: sale.request_id,
+            },
+      
+          });
+    
+    } catch (notificationError) {
+    
+      console.error(
+        'Failed notification:',
+        notificationError
+      );
+    
+    }
 
     return sale;
 

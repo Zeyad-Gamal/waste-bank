@@ -21,6 +21,19 @@ module.exports = {
 
   // purchases
 
-  NEW_PURCHASE: 'new_purchase'
+  NEW_PURCHASE: 'new_purchase',
+  PURCHASE_APPROVED: 'purchase_approved',
+  PURCHASE_REJECTED: 'purchase_rejected',
+  PURCHASE_COMPLETED: 'purchase_completed',
+
+
+
+    // sales
+
+  NEW_SALE:      'new_sale',
+  SALE_APPROVED: 'sale_approved',
+  SALE_REJECTED: 'sale_rejected',
+  SALE_COMPLETED:'sale_completed',
+
 
 };

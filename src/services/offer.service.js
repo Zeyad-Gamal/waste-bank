@@ -9,6 +9,9 @@ const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
 
+const NOTIFICATION_MESSAGES = require('../constants/notification-messages');
+
+
 
 exports.createOffer = async (data) => {
 
@@ -87,9 +90,9 @@ exports.createOffer = async (data) => {
     await notificationService.notifyAdmins({
       type: NOTIFICATION_TYPES.NEW_OFFER,
 
-      title: 'New Offer Submitted',
+      title: NOTIFICATION_MESSAGES.NEW_OFFER_TITLE,
 
-      message: `A new offer has been submitted.`,
+      message: NOTIFICATION_MESSAGES.NEW_OFFER_MESSAGE,
 
       data: {
         offer_id: offer.id,
@@ -328,9 +331,9 @@ exports.approveOffer = async (offerId) => {
 
   type: NOTIFICATION_TYPES.OFFER_APPROVED,
 
-  title: 'Offer Approved',
+  title: NOTIFICATION_MESSAGES.OFFER_APPROVED_TITLE,
 
-  message: 'Your offer has been approved.',
+  message: NOTIFICATION_MESSAGES.OFFER_APPROVED_MESSAGE,
 
   data: {
     offer_id: offer.id,
@@ -360,9 +363,9 @@ exports.rejectOffer = async (offerId) => {
 
   type: NOTIFICATION_TYPES.OFFER_REJECTED,
 
-  title: 'Offer Rejected',
+  title: NOTIFICATION_MESSAGES.OFFER_REJECTED_TITLE,
 
-  message: 'Your offer has been rejected.',
+  message: NOTIFICATION_MESSAGES.OFFER_REJECTED_MESSAGE,
 
   data: {
     offer_id: offer.id,
