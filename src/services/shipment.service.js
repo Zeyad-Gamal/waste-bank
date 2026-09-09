@@ -13,6 +13,8 @@ const notificationService = require('./notification.service');
 
 const NOTIFICATION_TYPES = require('../constants/notification-types');
 
+const NOTIFICATION_MESSAGES = require('../constants/notification-messages');
+
 const AppError = require('../utils/app-error');
 
 const ERROR_MESSAGES = require('../constants/error-messages');
@@ -191,10 +193,10 @@ exports.createShipment = async (data) => {
       type:
         NOTIFICATION_TYPES.SHIPMENT_CREATED,
 
-      title: 'Shipment Scheduled',
+      title: NOTIFICATION_MESSAGES.SHIPMENT_CREATED_TITLE,
 
       message:
-        'A new shipment has been scheduled.',
+        NOTIFICATION_MESSAGES.SHIPMENT_CREATED_MESSAGE,
 
       data: {
         shipment_id: shipment.id,
@@ -327,10 +329,10 @@ exports.updateShipmentStatus = async (
           .SHIPMENT_IN_PROGRESS;
 
       title =
-        'Shipment In Progress';
+        NOTIFICATION_MESSAGES.SHIPMENT_IN_PROGRESS_TITLE;
 
       message =
-        'Your shipment is now in transit.';
+        NOTIFICATION_MESSAGES.SHIPMENT_IN_PROGRESS_MESSAGE;
 
     }
 
@@ -342,10 +344,10 @@ exports.updateShipmentStatus = async (
           .SHIPMENT_COMPLETED;
 
       title =
-        'Shipment Completed';
+        NOTIFICATION_MESSAGES.SHIPMENT_CANCELLED_TITLE;
 
       message =
-        'Your shipment has been completed.';
+        NOTIFICATION_MESSAGES.SHIPMENT_COMPLETED_MESSAGE;
 
     }
 
@@ -357,10 +359,10 @@ exports.updateShipmentStatus = async (
           .SHIPMENT_CANCELLED;
 
       title =
-        'Shipment Cancelled';
+        NOTIFICATION_MESSAGES.SHIPMENT_CANCELLED_TITLE;
 
       message =
-        'Your shipment has been cancelled.';
+        NOTIFICATION_MESSAGES.SHIPMENT_CANCELLED_MESSAGE;
 
     }
 

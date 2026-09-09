@@ -596,10 +596,10 @@ exports.completePurchase = async (purchaseId) => {
 
 
 
-     const offer =
-      await Offer.findByPk(
-        purchase.offer_id
-      );
+    //  const offer =
+    //   await Offer.findByPk(
+    //     purchase.offer_id
+    //   );
 
        try {
 

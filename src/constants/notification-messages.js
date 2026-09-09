@@ -35,10 +35,21 @@ module.exports = {
 
 
   // Shipments
-  SHIPMENT_CREATED: 'تم جدولة شحنة جديده',
-  SHIPMENT_IN_PROGRESS: 'الشحنة في تقدم',
-  SHIPMENT_COMPLETED: 'تم الانتهاء من شحن شحنة',
-  SHIPMENT_CANCELLED: 'تم إلغاء شحنة',
+  SHIPMENT_CREATED_TITLE: 'شحنة جديده',
+  SHIPMENT_CREATED_MESSAGE: 'تم جدولة شحنة جديده',
+
+
+
+  SHIPMENT_IN_PROGRESS_TITLE: 'تحديث في شحنة',
+  SHIPMENT_IN_PROGRESS_MESSAGE: 'الشحنة في تقدم',
+
+
+  SHIPMENT_COMPLETED_TITLE: 'تحديث في شحنة',
+  SHIPMENT_COMPLETED_MESSAGE: 'تم الانتهاء من شحن شحنة',
+
+
+  SHIPMENT_CANCELLED_TITLE: 'تحديث في شحنة',
+  SHIPMENT_CANCELLED_MESSAGE: 'تم إلغاء شحنة',
 
 
   // purchases
