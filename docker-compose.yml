@@ -1,13 +1,81 @@
 
+# services:
+
+#   app:
+
+#     build: .
+
+#     container_name: waste-bank-api
+
+#     restart: always
+
+#     ports:
+#       - "3000:3000"
+
+#     env_file:
+#       - .env
+
+#     depends_on:
+#       - mysql
+
+#     volumes:
+#       - .:/app
+#       - /app/node_modules
+#       - ./uploads:/app/uploads
+
+#   mysql:
+
+#     image: mysql:8.0
+
+#     container_name: waste-bank-db
+
+#     restart: always
+
+#     environment:
+
+#       DB_PORT: 3000
+      
+#       DB_HOST: mysql
+
+#       DB_PORT: 3306
+
+#       DB_NAME: waste_bank
+
+#       DB_USER: wastebank
+
+#       DB_PASSWORD: wastebank
+      
+#       JWT_SECRET: secret_key
+      
+#       JWT_EXPIRES_IN: 7d
+      
+#       PORT: 5000
+
+#     ports:
+
+#       - "3306:3306"
+
+#     volumes:
+
+#       - mysql_data:/var/lib/mysql
+
+# volumes:
+
+#   mysql_data:
+
+
+
+
+
+
+
+
 services:
 
   app:
-
     build: .
-
     container_name: waste-bank-api
-
-    restart: always
+    restart: unless-stopped
 
     ports:
       - "3000:3000"
@@ -16,7 +84,8 @@ services:
       - .env
 
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
     volumes:
       - .:/app
@@ -24,40 +93,24 @@ services:
       - ./uploads:/app/uploads
 
   mysql:
-
     image: mysql:8.0
-
     container_name: waste-bank-db
-
-    restart: always
+    restart: unless-stopped
 
     environment:
-
-      DB_PORT: 3000
-      
-      DB_HOST: mysql
-
-      DB_PORT: 3306
-
-      DB_NAME: waste_bank
-
-      DB_USER: wastebank
-
-      DB_PASSWORD: wastebank
-      
-      JWT_SECRET: secret_key
-      
-      JWT_EXPIRES_IN: 7d
-      
-      PORT: 5000
-
-    ports:
-
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: waste_bank
+      MYSQL_USER: wastebank
+      MYSQL_PASSWORD: wastebank
 
     volumes:
-
       - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
 
