@@ -14,6 +14,7 @@ const shipmentRoutes = require('./routes/shipment.routes');
 const processRatingRoutes = require('./routes/process_rating.routes');
 const industryRoutes = require('./routes/industry.routes');
 const categoryRoutes = require('./routes/category.routes');
+const healthRoutes = require('./routes/health.routes');
 
 const adminFarmerRoutes = require('./routes/admin/farmer.routes');
 const adminFactoryRoutes = require('./routes/admin/factory.routes');
@@ -64,6 +65,7 @@ app.use('/api/shipments',shipmentRoutes);
 app.use('/api/process-rating',processRatingRoutes);
 app.use('/api/industries',industryRoutes);
 app.use('/api/categories',categoryRoutes)
+app.use('/api/health',healthRoutes)
 app.use(
   '/uploads',
   express.static(path.join(__dirname, '../uploads'))
