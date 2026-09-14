@@ -65,7 +65,8 @@ app.use('/api/shipments',shipmentRoutes);
 app.use('/api/process-rating',processRatingRoutes);
 app.use('/api/industries',industryRoutes);
 app.use('/api/categories',categoryRoutes)
-app.use('/api/health',healthRoutes)
+
+app.use('/health',healthRoutes)
 app.use(
   '/uploads',
   express.static(path.join(__dirname, '../uploads'))

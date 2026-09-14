@@ -30,3 +30,6 @@ coverage/
 
 
 uploads/
+
+
+nginx/certs/
