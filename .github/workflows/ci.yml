@@ -57,6 +57,8 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}'
+          scan-type: 'image'
+          scanners: 'vuln'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
