@@ -4,6 +4,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk upgrade --no-cache
+
 COPY package*.json ./
 
 RUN npm ci --omit=dev
