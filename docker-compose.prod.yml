@@ -1,9 +1,7 @@
 services:
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: zeyadgamal/waste-bank-backend:${IMAGE_TAG}
 
     container_name: waste-bank-api-prod
 

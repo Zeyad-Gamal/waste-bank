@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}
-      
+
       - name: Run Trivy vulnerability scanner
         if: github.event_name == 'push'
         uses: aquasecurity/trivy-action@v0.36.0
@@ -64,3 +64,40 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+
+
+  deploy:
+    name: Deploy to EC2
+    needs: test
+    if: github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+          
+            cd ~/waste-bank
+          
+            git fetch origin main
+            git reset --hard origin/main
+          
+            export IMAGE_TAG=${{ github.sha }}
+          
+            docker compose -f docker-compose.prod.yml pull app
+          
+            docker compose -f docker-compose.prod.yml up -d app mysql nginx
+          
+            docker image prune -f
+          
+            sleep 10
+          
+            curl -f http://localhost/health
+          
+            echo "Deployment successful"
