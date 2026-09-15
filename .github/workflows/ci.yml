@@ -96,8 +96,16 @@ jobs:
           
             docker image prune -f
           
-            sleep 10
-          
+            for i in {1..12}; do
+              if curl -fs http://localhost/health; then
+                echo "Health check passed"
+                break
+              fi
+            
+              echo "Waiting for application to become ready..."
+              sleep 5
+            done
+            
             curl -f http://localhost/health
-          
+            
             echo "Deployment successful"
