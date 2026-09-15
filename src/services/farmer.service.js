@@ -112,7 +112,7 @@ exports.addFarmer = async (data) => {
     }
 
     if (existingFarmer) {
-      throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
+      throw new AppError(ERROR_MESSAGES.NATIONAL_ID_ALREADY_EXISTS, 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
