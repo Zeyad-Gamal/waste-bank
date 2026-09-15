@@ -12,7 +12,7 @@ RUN npm ci --omit=dev
 
 COPY . .
 
-RUN rm -f package-lock.json
+RUN rm -f package.json package-lock.json
 
 RUN chown -R node:node /app
 
