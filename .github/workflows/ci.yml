@@ -51,3 +51,13 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}
+      
+      - name: Run Trivy vulnerability scanner
+        if: github.event_name == 'push'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
