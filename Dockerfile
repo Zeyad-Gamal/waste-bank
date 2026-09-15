@@ -19,7 +19,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN apk upgrade --no-cache
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules/npm \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
