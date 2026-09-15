@@ -38,7 +38,7 @@ exports.registerFarmer = async (data) => {
         password: hashedPassword,
         role: 'farmer',
         is_active: 'active',
-        email: 'NULL',
+        email: null,
         email_verified: true
       },
       { transaction }

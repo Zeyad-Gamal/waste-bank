@@ -10,7 +10,7 @@ module.exports = {
       password: Sequelize.STRING,
       role: Sequelize.ENUM('farmer', 'factory', 'admin'),
       phone: Sequelize.STRING,
-      email: { type: Sequelize.STRING, unique: true , allowNull: false},
+      email: { type: Sequelize.STRING, unique: true , allowNull: true},
       is_active: {
         type: Sequelize.ENUM('active', 'inactive'),
         allowNull: true,
