@@ -59,6 +59,7 @@ jobs:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}'
           scan-type: 'image'
           scanners: 'vuln'
+          vuln-type: 'os,library'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
