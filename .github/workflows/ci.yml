@@ -54,7 +54,7 @@ jobs:
       
       - name: Run Trivy vulnerability scanner
         if: github.event_name == 'push'
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/waste-bank-backend:${{ github.sha }}'
           format: 'table'
