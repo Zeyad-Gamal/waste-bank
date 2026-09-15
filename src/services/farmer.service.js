@@ -101,7 +101,17 @@ exports.addFarmer = async (data) => {
       },
     });
 
+    const existingFarmer = await Farmer.findOne({
+      where: {
+         national_id: data.national_id,
+      },
+    });
+
     if (existingUser) {
+      throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
+    }
+
+    if (existingFarmer) {
       throw new AppError(ERROR_MESSAGES.PHONE_ALREADY_EXISTS, 400);
     }
 

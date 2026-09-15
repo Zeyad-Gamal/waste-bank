@@ -133,7 +133,10 @@ module.exports = {
   message: 'لا يمكن حذف الفلاح إلا إذا كان غير نشط',
 },
 
-
+NATIONAL_ID_ALREADY_EXISTS: {
+    code: 'NATIONAL_ID_ALREADY_EXISTS',
+    message: 'الرقم القومي مستخدم بالفعل',
+  },
 
 
 
