@@ -3,8 +3,13 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../controllers/auth.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
 
 const upload = require('../utils/multer');
+
+const {
+  updatePasswordSchema,
+} = require('../../validations/user.validation');
 
 
 router.post(
@@ -30,6 +35,27 @@ router.post(
 
 router.post('/login', authController.login);
 
+
+router.get(
+  
+  '/me', 
+  
+    authMiddleware,
+
+    authorizeRoles('farmer','factory'),
+  
+  authController.me
+
+);
+
+
+router.patch(
+  '/update-password',
+  authMiddleware,
+    authorizeRoles('factory','farmer'),
+  validate(updatePasswordSchema),
+  authController.updatePassword
+);
 
 
 

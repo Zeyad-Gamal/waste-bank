@@ -351,7 +351,12 @@ exports.adminLogin = async (data) => {
 
 exports.me = async (id) => {
 
-  const user = await User.findByPk(id);
+ const user = await User.findByPk(id, {
+  attributes: {
+    exclude: ['password'],
+  },
+});
+
 
   return user;
 
