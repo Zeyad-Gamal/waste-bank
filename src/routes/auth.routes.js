@@ -4,6 +4,7 @@ const router = express.Router();
 
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
+const authorizeRoles = require('../middlewares/role.middleware');
 
 const upload = require('../utils/multer');
 
