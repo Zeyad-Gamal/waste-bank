@@ -12,6 +12,8 @@ const {
   updatePasswordSchema,
 } = require('../validations/user.validation');
 
+const validate =
+  require('../middlewares/validation.middleware');
 
 router.post(
   '/register/farmer',
