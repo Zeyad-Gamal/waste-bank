@@ -9,7 +9,7 @@ const upload = require('../utils/multer');
 
 const {
   updatePasswordSchema,
-} = require('../../validations/user.validation');
+} = require('../validations/user.validation');
 
 
 router.post(
