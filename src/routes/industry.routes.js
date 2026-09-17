@@ -20,9 +20,9 @@ const validate =
 router.get(
   '/',
 
-  authMiddleware,
+  // authMiddleware,
 
-  authorizeRoles('factory'),
+  // authorizeRoles('factory'),
 
   controller.getAll
 );
