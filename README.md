@@ -480,6 +480,6 @@ Further production-hardening work may include:
 
 ## Maintainer
 
-**Ziad Zayed**
+**Zeyad Gamal**
 
 Backend Development | DevOps | Cloud Infrastructure
